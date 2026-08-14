@@ -172,7 +172,7 @@ export default async function initial_data_seed({
       salesChannelsData: [
         {
           name: "Sokozi Store",
-          description: "Soko Yako Mkononi — Tanzania mobile marketplace",
+          description: "Soko Yako Mkononi — Tanzania mobile store",
         },
       ],
     },

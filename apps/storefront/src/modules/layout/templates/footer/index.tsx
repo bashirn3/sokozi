@@ -1,4 +1,5 @@
 import { listCategories } from "@lib/data/categories";
+import { whatsappNumber } from "@lib/util/whatsapp";
 import { listCollections } from "@lib/data/collections";
 import { Text, clx } from "@modules/common/components/ui";
 
@@ -111,9 +112,9 @@ export default async function Footer() {
             <div className="flex flex-col gap-y-2">
               <span className="txt-small-plus txt-ui-fg-base">Sokozi</span>
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
-                <li>Mobile money checkout</li>
-                <li>WhatsApp ordering</li>
-                <li>Same-day delivery in Dar es Salaam</li>
+                <li>Prices in TZS</li>
+                {whatsappNumber && <li>WhatsApp ordering</li>}
+                <li>Delivery in 1 to 24 hours</li>
               </ul>
             </div>
           </div>
