@@ -29,7 +29,7 @@ const Register = ({ setCurrentView }: Props) => {
       </p>
       {message?.state === "verification_required" && (
         <div
-          className="w-full mb-4 text-center text-base-regular text-ui-fg-base bg-ui-bg-subtle border border-ui-border-base rounded-rounded p-4"
+          className="w-full mb-4 text-center text-base-regular text-ui-fg-base bg-ui-bg-subtle border border-ui-border-base rounded p-4"
           data-testid="register-verification-message"
         >
           We sent a verification link to <strong>{message.email}</strong>.

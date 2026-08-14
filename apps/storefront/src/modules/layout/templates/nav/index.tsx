@@ -28,7 +28,7 @@ export default async function Nav() {
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase text-emerald-800"
+              className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase text-ink"
               data-testid="nav-store-link"
             >
               Sokozi

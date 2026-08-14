@@ -1,6 +1,38 @@
+@import "./tokens.css";
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+@layer base {
+  /**
+   * Visible keyboard focus everywhere.
+   *
+   * The starter leaned on box-shadow rings from the Medusa preset, which the
+   * shadow sweep removed. This replaces them with a real outline, and only for
+   * keyboard users, so pointer clicks do not leave a ring behind.
+   */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--marigold);
+    outline-offset: 2px;
+  }
+
+  /**
+   * Respect a reduced motion preference. Transitions and animations are
+   * decorative throughout this storefront, so they can be cut to near zero
+   * rather than reworked individually.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
 
 @layer utilities {
   /* Chrome, Safari and Opera */
@@ -35,9 +67,11 @@
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    border: 1px solid #212121;
-    -webkit-text-fill-color: #212121;
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    border: 1px solid var(--ink);
+    -webkit-text-fill-color: var(--ink);
+    /* Not decoration. This is the only way to override the browser's autofill
+       background, so it survives the no-shadow rule. */
+    -webkit-box-shadow: 0 0 0px 1000px var(--paper) inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 
@@ -50,12 +84,50 @@
 }
 
 @layer components {
+  /**
+   * Type scale. Mobile first, display sizes fluid.
+   *
+   * The price classes are the signature of this store: on a product card the
+   * price is set larger than the product name, because in a market the price
+   * is the headline.
+   */
+  .display {
+    font: 800 clamp(2rem, 8vw, 3.25rem) / 0.95 var(--font-display);
+    letter-spacing: -0.03em;
+  }
+
+  .heading {
+    font: 700 1.25rem / 1.15 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  .price {
+    font: 800 1.75rem / 1 var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  .price-label {
+    font: 600 0.6875rem / 1 var(--font-body);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .body {
+    font: 400 0.9375rem / 1.5 var(--font-body);
+  }
+
+  .label {
+    font: 600 0.75rem / 1 var(--font-body);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
   .content-container {
     @apply max-w-[1440px] w-full mx-auto px-6;
   }
 
   .contrast-btn {
-    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-200 ease-in;
+    @apply px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition-colors duration-200 ease-in;
   }
 
   .text-xsmall-regular {

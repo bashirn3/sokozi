@@ -1,0 +1,57 @@
+/**
+ * Sokozi design tokens.
+ *
+ * Single source of truth for colour and shape. Components reference these
+ * through the Tailwind names declared in tailwind.config.js.
+ *
+ * Rule: no hex values in components. If a colour is needed that is not here,
+ * add a token rather than inlining it.
+ *
+ * Two documented exceptions, both unavoidable:
+ *
+ * 1. Third party brand marks keep their own colours, because a logo recoloured
+ *    to fit our palette is no longer that logo. This covers the Medusa, Next.js
+ *    and PayPal icons and the Medusa CTA in the footer.
+ *
+ * 2. The Stripe card field renders inside a Stripe owned iframe and cannot read
+ *    these variables, so its style object in
+ *    modules/checkout/components/payment-container takes literal values. Those
+ *    literals mirror --ink and --ink-muted and have to be updated by hand if
+ *    these change.
+ */
+
+:root {
+  /* Ground and ink. Warm paper rather than pure white, so the near-black
+     reads as printed rather than as a screen. */
+  --paper: #fbfaf7;
+  --paper-shade: #f1ede4;
+  --ink: #14110e;
+  --ink-muted: #6b645b;
+  --hairline: #ddd7cb;
+
+  /* The single accent. Used for calls to action and the deals rule.
+     Nothing else gets to be this loud. */
+  --marigold: #e39a00;
+
+  /* Flat category blocks, in the manner of painted duka boards. */
+  --cat-electronics: #1f3a5f;
+  --cat-fashion: #b3402a;
+  --cat-home: #2e5e3a;
+  --cat-beauty: #7a3f63;
+
+  /* Status */
+  --ok: #2e5e3a;
+  --error: #a32b1c;
+
+  /* Type. --font-archivo is injected by next/font in src/app/layout.tsx.
+     Body text deliberately downloads nothing. */
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Shape. One radius, one border weight, everywhere.
+     Genuinely circular controls are the documented exception: radio buttons,
+     spinners and avatars keep rounded-full because their function depends on
+     being a circle. */
+  --radius: 2px;
+  --border: 1px;
+}

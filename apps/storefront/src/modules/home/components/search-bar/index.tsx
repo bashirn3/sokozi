@@ -28,7 +28,7 @@ const SearchBar = () => {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Search products..."
-        className="w-full rounded-full border border-ui-border-base bg-white px-5 py-3 text-sm text-ui-fg-base placeholder:text-ui-fg-muted focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        className="w-full rounded border border-ui-border-base bg-white px-5 py-3 text-sm text-ui-fg-base placeholder:text-ui-fg-muted focus:outline-none focus:ring-2 focus:ring-ink"
       />
     </form>
   )

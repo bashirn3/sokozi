@@ -1,7 +1,6 @@
-import { clx } from "@modules/common/components/ui"
-
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
+import PriceBlock from "../price-block"
 
 export default function ProductPrice({
   product,
@@ -22,36 +21,25 @@ export default function ProductPrice({
   }
 
   return (
-    <div className="flex flex-col text-ui-fg-base">
-      <span
-        className={clx("text-xl-semi", {
-          "text-ui-fg-interactive": selectedPrice.price_type === "sale",
-        })}
-      >
-        {!variant && "From "}
-        <span
-          data-testid="product-price"
-          data-value={selectedPrice.calculated_price_number}
-        >
-          {selectedPrice.calculated_price}
-        </span>
-      </span>
+    <div className="flex flex-col gap-1">
+      <PriceBlock
+        amount={selectedPrice.calculated_price_number}
+        currencyCode={selectedPrice.currency_code}
+        prefix={!variant ? "From" : undefined}
+        testId="product-price"
+      />
       {selectedPrice.price_type === "sale" && (
-        <>
-          <p>
-            <span className="text-ui-fg-subtle">Original: </span>
-            <span
-              className="line-through"
-              data-testid="original-product-price"
-              data-value={selectedPrice.original_price_number}
-            >
-              {selectedPrice.original_price}
-            </span>
-          </p>
-          <span className="text-ui-fg-interactive">
-            -{selectedPrice.percentage_diff}%
+        <p className="label text-ink-muted">
+          <span>Original: </span>
+          <span
+            className="line-through"
+            data-testid="original-product-price"
+            data-value={selectedPrice.original_price_number}
+          >
+            {selectedPrice.original_price}
           </span>
-        </>
+          <span className="ml-2">-{selectedPrice.percentage_diff}%</span>
+        </p>
       )}
     </div>
   )

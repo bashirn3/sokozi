@@ -20,12 +20,12 @@ const SokoziActions = ({ productTitle, priceLabel }: SokoziActionsProps) => {
         href={whatsappUrl}
         target="_blank"
         rel="noreferrer"
-        className="inline-flex items-center justify-center rounded-md border border-emerald-600 bg-emerald-50 text-emerald-800 text-sm font-medium py-2.5 hover:bg-emerald-100 transition-colors"
+        className="label inline-flex items-center justify-center rounded border border-ink bg-paper py-3.5 text-ink transition-colors hover:bg-ink hover:text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
       >
         Order on WhatsApp
       </a>
-      <p className="text-xs text-ui-fg-muted">
-        ✓ In stock in Dar es Salaam · 🚚 Delivery: 1–24 hours
+      <p className="body text-ink-muted">
+        In stock in Dar es Salaam &middot; Delivery 1-24 hours
       </p>
     </div>
   )
