@@ -56,3 +56,8 @@ ehthumbs.db
 Thumbs.db
 **/.DS_Store
 .env*
+
+# Templates carry blank values only and must stay tracked.
+# This negation has to sit after .env* : in gitignore the last matching
+# pattern wins, so placing it earlier would have no effect.
+!**/.env.template

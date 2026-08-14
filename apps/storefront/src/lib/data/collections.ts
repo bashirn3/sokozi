@@ -40,6 +40,11 @@ export const listCollections = async (
       }
     )
     .then(({ collections }) => ({ collections, count: collections.length }))
+    .catch(() => {
+      // Backend unreachable. Fail soft so the layout still renders.
+      console.error("listCollections: backend unreachable, returning empty list")
+      return { collections: [], count: 0 }
+    })
 }
 
 export const getCollectionByHandle = async (
