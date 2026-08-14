@@ -24,17 +24,6 @@ const SokoziActions = ({ productTitle, priceLabel }: SokoziActionsProps) => {
       >
         Order on WhatsApp
       </a>
-      <button
-        type="button"
-        className="inline-flex items-center justify-center rounded-md border border-ui-border-base bg-ui-bg-base text-sm font-medium py-2.5 hover:bg-ui-bg-subtle transition-colors"
-        onClick={() =>
-          alert(
-            "M-Pesa checkout will be connected here. For now, use Add to Cart or WhatsApp."
-          )
-        }
-      >
-        Pay via M-Pesa
-      </button>
       <p className="text-xs text-ui-fg-muted">
         ✓ In stock in Dar es Salaam · 🚚 Delivery: 1–24 hours
       </p>

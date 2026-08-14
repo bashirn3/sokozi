@@ -117,6 +117,18 @@ const SOKOZI_PRODUCTS = [
     image:
       "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&auto=format&fit=crop",
   },
+  {
+    title: "Shea Butter Moisturizer",
+    handle: "shea-butter-moisturizer",
+    category: "Beauty",
+    description:
+      "Rich shea butter moisturizer for daily skin care. Unscented and gentle enough for everyday use.",
+    price: 12000,
+    sku: "SOKOZI-SHEA",
+    image:
+      "https://images.unsplash.com/photo-1777694037031-18460ee6c940?w=800&auto=format&fit=crop",
+    deal: true,
+  },
 ] as const;
 
 export default async function initial_data_seed({
@@ -132,6 +144,25 @@ export default async function initial_data_seed({
   );
 
   const countries = ["tz"];
+
+  // Guard against a second run.
+  //
+  // medusa db:migrate records this script in the script_migrations table and
+  // will not repeat it, but medusa exec and pnpm backend:seed both bypass that
+  // tracking entirely. Without this check a second run duplicates the store,
+  // region, sales channel, publishable key and warehouse, then fails on the
+  // duplicate product handles, leaving the database in a broken half state.
+  const { data: existingStores } = await query.graph({
+    entity: "store",
+    fields: ["id"],
+  });
+
+  if (existingStores.length) {
+    logger.info(
+      "Sokozi seed skipped: a store already exists. Nothing was changed."
+    );
+    return;
+  }
 
   logger.info("Seeding Sokozi store data...");
   const {

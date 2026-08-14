@@ -12,5 +12,8 @@ module.exports = defineConfig({
       jwtSecret: process.env.JWT_SECRET,
       cookieSecret: process.env.COOKIE_SECRET,
     }
-  }
+  },
+  // Payment, file storage and other providers are registered here.
+  // Empty until Stripe is wired up.
+  modules: []
 })
