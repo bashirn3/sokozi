@@ -1,0 +1,32 @@
+# Keeps the build context small and, more importantly, keeps secrets and build
+# output from ever entering an image layer.
+
+node_modules
+**/node_modules
+
+# Build output, regenerated inside the image
+**/.next
+**/dist
+**/.medusa
+**/.turbo
+**/build
+**/out
+**/tsconfig.tsbuildinfo
+
+# Secrets. These must never reach a layer, even a discarded one.
+.env
+**/.env
+**/.env.local
+**/.env.*.local
+
+.git
+.github
+.vscode
+.agents
+.cursor
+
+# Local-only artefacts
+plan.html
+*.log
+**/.DS_Store
+coverage
