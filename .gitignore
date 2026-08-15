@@ -61,3 +61,6 @@ Thumbs.db
 # This negation has to sit after .env* : in gitignore the last matching
 # pattern wins, so placing it earlier would have no effect.
 !**/.env.template
+
+# Local-only E2E test checklist, not part of the app
+plan.html
