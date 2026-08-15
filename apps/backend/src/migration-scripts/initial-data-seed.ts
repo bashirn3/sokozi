@@ -22,6 +22,22 @@ import {
   linkSalesChannelsToStockLocationWorkflow,
 } from "@medusajs/medusa/core-flows";
 
+// Category tile imagery, stored on the category so it can be changed from
+// admin later without a deploy. The storefront falls back to its own copy of
+// this map for databases seeded before these were added.
+//
+// Every image here is a verified photograph. See the note in
+// apps/storefront/src/lib/constants/category-images.ts before changing any.
+const SOKOZI_CATEGORY_IMAGES = {
+  Electronics:
+    "https://images.unsplash.com/photo-1547489401-fcada4966052?w=1200&auto=format&fit=crop",
+  Fashion:
+    "https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=1200&auto=format&fit=crop",
+  Home: "https://images.unsplash.com/photo-1556912173-46c336c7fd55?w=1200&auto=format&fit=crop",
+  Beauty:
+    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1200&auto=format&fit=crop",
+} as const;
+
 const SOKOZI_PRODUCTS = [
   {
     title: "Wireless Earbuds V5",
@@ -54,7 +70,7 @@ const SOKOZI_PRODUCTS = [
     price: 35000,
     sku: "SOKOZI-POWERBANK",
     image:
-      "https://images.unsplash.com/photo-1609091839311-9a322d2181a8?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1566554738544-d962991c3fee?w=800&auto=format&fit=crop",
   },
   {
     title: "LED Lights Pack",
@@ -105,7 +121,7 @@ const SOKOZI_PRODUCTS = [
     price: 45000,
     sku: "SOKOZI-BLENDER",
     image:
-      "https://images.unsplash.com/photo-1570222094114-d054a817e56a?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1512203864638-f6cbb3cca374?w=800&auto=format&fit=crop",
   },
   {
     title: "Storage Containers Set",
@@ -126,7 +142,7 @@ const SOKOZI_PRODUCTS = [
     price: 12000,
     sku: "SOKOZI-SHEA",
     image:
-      "https://images.unsplash.com/photo-1777694037031-18460ee6c940?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606755612769-5655c261e8ce?w=800&auto=format&fit=crop",
     deal: true,
   },
 ] as const;
@@ -387,10 +403,26 @@ export default async function initial_data_seed({
   ).run({
     input: {
       product_categories: [
-        { name: "Electronics", is_active: true },
-        { name: "Fashion", is_active: true },
-        { name: "Home", is_active: true },
-        { name: "Beauty", is_active: true },
+        {
+          name: "Electronics",
+          is_active: true,
+          metadata: { image_url: SOKOZI_CATEGORY_IMAGES.Electronics },
+        },
+        {
+          name: "Fashion",
+          is_active: true,
+          metadata: { image_url: SOKOZI_CATEGORY_IMAGES.Fashion },
+        },
+        {
+          name: "Home",
+          is_active: true,
+          metadata: { image_url: SOKOZI_CATEGORY_IMAGES.Home },
+        },
+        {
+          name: "Beauty",
+          is_active: true,
+          metadata: { image_url: SOKOZI_CATEGORY_IMAGES.Beauty },
+        },
       ],
     },
   });

@@ -35,6 +35,9 @@ const resolveFormatter = ({
   return new Intl.NumberFormat(resolvedLocale, {
     style: "currency",
     currency: currency_code,
+    // Show the ISO code rather than a symbol, so TZS reads as "TZS 25,000".
+    // The en-TZ symbol is "TSh", which is not what the store should display.
+    currencyDisplay: tzs ? "code" : "symbol",
     ...fractionDigits,
   })
 }

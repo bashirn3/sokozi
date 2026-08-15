@@ -1,6 +1,6 @@
 # Sokozi
 
-**Soko Yako Mkononi**. A mobile-first ecommerce store for Tanzania, built on [Medusa](https://medusajs.com) with the Next.js starter storefront.
+**Soko Yako Mkononi**. A mobile-first ecommerce store for Tanzania.
 
 ## What's included
 

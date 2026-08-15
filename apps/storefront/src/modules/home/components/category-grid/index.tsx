@@ -1,9 +1,12 @@
+import { getCategoryImage } from "@lib/constants/category-images"
 import { HttpTypes } from "@medusajs/types"
 import { clx } from "@modules/common/components/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import Image from "next/image"
 
 // Written out in full rather than composed, so Tailwind's content scanner
-// sees each class.
+// sees each class. Used as the ground behind the image, and as the whole tile
+// for any category without one.
 const CATEGORY_COLOR: Record<string, string> = {
   Electronics: "bg-cat-electronics",
   Fashion: "bg-cat-fashion",
@@ -26,18 +29,33 @@ const CategoryGrid = ({ categories }: CategoryGridProps) => {
     <section className="content-container py-12">
       <h2 className="heading mb-6">Shop by category</h2>
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {topLevel.map((category) => (
-          <LocalizedClientLink
-            key={category.id}
-            href={`/categories/${category.handle}`}
-            className={clx(
-              "flex aspect-[4/3] items-end rounded p-5 text-paper transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink",
-              CATEGORY_COLOR[category.name ?? ""] ?? "bg-ink"
-            )}
-          >
-            <span className="heading">{category.name}</span>
-          </LocalizedClientLink>
-        ))}
+        {topLevel.map((category) => {
+          const image = getCategoryImage(category.handle, category.metadata)
+
+          return (
+            <LocalizedClientLink
+              key={category.id}
+              href={`/categories/${category.handle}`}
+              className={clx(
+                "group relative flex aspect-[4/3] items-end overflow-hidden rounded p-5 text-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink",
+                CATEGORY_COLOR[category.name ?? ""] ?? "bg-ink"
+              )}
+            >
+              {image && (
+                <Image
+                  src={image}
+                  alt=""
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              )}
+              {/* Keeps the label readable over whatever the photo is doing. */}
+              <span className="absolute inset-0 bg-ink/45" aria-hidden="true" />
+              <span className="heading relative">{category.name}</span>
+            </LocalizedClientLink>
+          )
+        })}
       </div>
     </section>
   )
