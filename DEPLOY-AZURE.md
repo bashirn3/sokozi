@@ -3,8 +3,56 @@
 This replaces the earlier Render plan. `render.yaml` and `DEPLOY-BACKEND.md` were
 removed when the target changed.
 
-**Status: planned, not yet executed.** Phase 1 below is repository work and is not
-finished. Nothing here has been deployed.
+**Status: deployed and serving.**
+
+| | |
+|---|---|
+| Storefront | https://sokozi-storefront-bashir.azurewebsites.net/tz |
+| Admin | https://sokozi-backend-bashir.azurewebsites.net/app |
+| Resource group | `swe` (shared, pre-existing) |
+| Region | South Africa North |
+
+Read [the deployment record](#what-actually-happened) before running the scripts
+again. Six defects only appeared when the scripts were run against real Azure,
+and each one reported success while leaving something broken.
+
+## What actually happened
+
+**The resource group could not be created.** The account holds no permissions at
+subscription scope and full rights inside five existing groups, so `az group
+create` is forbidden while everything inside a group is allowed. The scripts now
+reuse an existing group; pass `RG=` to choose one. `az group exists` is useless
+for the check, returning Forbidden rather than false.
+
+**The registry landed in the wrong region.** `az acr create` without `-l` inherits
+the resource group's region, so reusing a group made for something else put the
+registry an ocean away from everything else.
+
+**`--database-name` became an error.** It now applies only to elastic clusters.
+The database is created as its own step.
+
+**`az webapp create` produced an app that could not pull its image.** It prepends
+the registry host to an image name that already carries it, giving
+`acr.io/acr.io/image:tag`, and does not persist the registry credentials at all.
+Both are set explicitly after creation. It also crashes after succeeding, on some
+CLI builds, while fetching a publish profile, so its exit code means nothing.
+
+**The backend crash looped while looking healthy.** `medusa build` emits a
+self-contained server into `.medusa/server`, and it has to be started from
+inside that directory. Started from the source directory it migrates
+successfully, fails to find the admin's `index.html`, and exits. Migrations
+succeeded on every loop, so the database looked perfectly fine while nothing
+served a request.
+
+**The storefront served 503 with a correct bundle.** `ENV` does not cross a
+Docker stage boundary, and `check-env-variables.js` runs on every start rather
+than only during the build. The `NEXT_PUBLIC_*` values were inlined correctly and
+the process still exited immediately. The runner stage now redeclares them.
+
+**Stripe was registered but not linked to the region.** The seed created the
+region before Stripe existed as a provider, so checkout offered only the system
+provider. Verify with `/store/payment-providers?region_id=...`, not by checking
+that the provider exists.
 
 ## The principle this plan is built on
 
