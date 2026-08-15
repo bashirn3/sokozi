@@ -1,14 +1,14 @@
 # Sokozi
 
-**Soko Yako Mkononi** — a mobile-first ecommerce store for Tanzania, built on [Medusa](https://medusajs.com) with the Next.js starter storefront.
+**Soko Yako Mkononi**. A mobile-first ecommerce store for Tanzania, built on [Medusa](https://medusajs.com) with the Next.js starter storefront.
 
 ## What's included
 
-- **Backend** (`apps/backend`) — Medusa commerce engine with Tanzania region, TZS currency, and seeded catalog
-- **Storefront** (`apps/storefront`) — Mobile-first Next.js shop with Sokozi branding
-- **Products** — Electronics, Fashion, Home and Beauty categories, priced in TZS
-- **Shipping** — City delivery TZS 5,000 / Express TZS 8,000
-- **UI features** — Product search, Today's Deals rail, horizontal product feed, and a WhatsApp order button that appears only when a number is configured
+- **Backend** (`apps/backend`): Medusa commerce engine with Tanzania region, TZS currency, and seeded catalog
+- **Storefront** (`apps/storefront`): Mobile-first Next.js shop with Sokozi branding
+- **Products**: Electronics, Fashion, Home and Beauty categories, priced in TZS
+- **Shipping**: City delivery TZS 5,000 / Express TZS 8,000
+- **UI features**: Product search, Today's Deals rail, horizontal product feed, and a WhatsApp order button that appears only when a number is configured
 
 ## Prerequisites
 
@@ -26,10 +26,10 @@ in. The storefront build exits with a missing variable error if
 ```bash
 cd sokozi
 
-# Terminal 1 — backend
+# Terminal 1, backend
 cd apps/backend && pnpm dev
 
-# Terminal 2 — storefront
+# Terminal 2, storefront
 cd apps/storefront && pnpm dev
 ```
 

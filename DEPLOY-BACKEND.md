@@ -91,7 +91,9 @@ the production key from the deployed admin, not from your machine.
 ## Vercel, storefront
 
 - Root directory: `apps/storefront`
-- Function region: **`fra1`**
+- Function region: **`fra1`**, already set as `"regions": ["fra1"]` in
+  `apps/storefront/vercel.json`. Selecting a region requires a Vercel Pro plan;
+  on Hobby the setting is ignored and functions run in the default region.
 
   Set this deliberately. The storefront's data fetching happens server side, so
   every page render is a call from the Vercel function to the Render backend in
