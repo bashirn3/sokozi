@@ -17,7 +17,7 @@ const CartTemplate = ({
       <div className="content-container" data-testid="cart-container">
         {cart?.items?.length ? (
           <div className="grid grid-cols-1 gap-8 small:grid-cols-[1fr_360px]">
-            <div className="flex flex-col gap-y-6 rounded border border-hairline bg-paper p-6">
+            <div className="flex flex-col gap-y-6 bg-paper p-6">
               {!customer && (
                 <>
                   <SignInPrompt />
@@ -29,7 +29,7 @@ const CartTemplate = ({
             <div className="relative">
               <div className="sticky top-12 flex flex-col gap-y-8">
                 {cart && cart.region && (
-                  <div className="rounded border border-hairline bg-paper p-6">
+                  <div className="bg-paper p-6">
                     <Summary cart={cart} />
                   </div>
                 )}
