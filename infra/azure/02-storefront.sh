@@ -60,28 +60,59 @@ ACR_SERVER="$(az acr show -n "$ACR" --query loginServer -o tsv)"
 ACR_USER="$(az acr credential show -n "$ACR" --query username -o tsv)"
 ACR_PASS="$(az acr credential show -n "$ACR" --query 'passwords[0].value' -o tsv)"
 
-if az webapp show -g "$RG" -n "$STOREFRONT_APP" >/dev/null 2>&1; then
-  az webapp config container set -g "$RG" -n "$STOREFRONT_APP" \
-    --container-image-name "$ACR_SERVER/sokozi-storefront:latest" \
-    --container-registry-url "https://$ACR_SERVER" \
-    --container-registry-user "$ACR_USER" \
-    --container-registry-password "$ACR_PASS" -o none
-  az webapp restart -g "$RG" -n "$STOREFRONT_APP" -o none
-else
+# `az webapp show` is not usable for the existence check. On some CLI builds it
+# aborts on an unrelated XML parsing fault, which would send every run down the
+# create path. Listing and filtering avoids that code path entirely.
+app_exists() {
+  [[ -n "$(az webapp list -g "$RG" --query "[?name=='${1}'].name" -o tsv)" ]]
+}
+
+if ! app_exists "$STOREFRONT_APP"; then
+  # `az webapp create` creates the app and can then crash while fetching the FTP
+  # publish profile for its own output, so its exit code says nothing about
+  # whether the app exists. The result is verified instead of trusted.
   az webapp create \
     -g "$RG" -p "$PLAN" -n "$STOREFRONT_APP" \
-    --container-image-name "$ACR_SERVER/sokozi-storefront:latest" \
-    --container-registry-url "https://$ACR_SERVER" \
-    --container-registry-user "$ACR_USER" \
-    --container-registry-password "$ACR_PASS" -o none
+    --container-image-name "$ACR_SERVER/sokozi-storefront:latest" -o none || true
 
-  az webapp config appsettings set -g "$RG" -n "$STOREFRONT_APP" --settings \
-    WEBSITES_PORT=8000 \
-    PORT=8000 \
-    NODE_ENV=production -o none
-
-  az webapp config set -g "$RG" -n "$STOREFRONT_APP" --always-on true -o none
+  app_exists "$STOREFRONT_APP" || { echo "Could not create $STOREFRONT_APP."; exit 1; }
 fi
+
+# The container is configured after creation, never during it, for two reasons.
+#
+# `az webapp create` prepends the registry host to --container-image-name even
+# when the name already carries it, producing acr.io/acr.io/image:tag, which
+# fails to pull with a message about the repository not existing.
+#
+# It also does not persist the registry credentials, so the app is left unable
+# to authenticate. Both faults look like a healthy deployment until the pull is
+# attempted, so both are set explicitly here.
+az webapp config container set -g "$RG" -n "$STOREFRONT_APP" \
+  --container-image-name "$ACR_SERVER/sokozi-storefront:latest" -o none
+
+# Registry credentials and runtime settings go in through a 0600 file rather
+# than the command line, which would expose the password in the process list.
+SETTINGS_TMP="$(mktemp -t sokozi-storefront-settings)"
+trap 'rm -f "$SETTINGS_TMP"' EXIT
+umask 077
+cat > "$SETTINGS_TMP" <<JSON
+[
+  {"name":"DOCKER_REGISTRY_SERVER_URL","value":"https://${ACR_SERVER}","slotSetting":false},
+  {"name":"DOCKER_REGISTRY_SERVER_USERNAME","value":"${ACR_USER}","slotSetting":false},
+  {"name":"DOCKER_REGISTRY_SERVER_PASSWORD","value":"${ACR_PASS}","slotSetting":false},
+  {"name":"WEBSITES_PORT","value":"8000","slotSetting":false},
+  {"name":"PORT","value":"8000","slotSetting":false},
+  {"name":"NODE_ENV","value":"production","slotSetting":false}
+]
+JSON
+chmod 600 "$SETTINGS_TMP"
+az webapp config appsettings set -g "$RG" -n "$STOREFRONT_APP" --settings @"$SETTINGS_TMP" -o none
+rm -f "$SETTINGS_TMP"
+
+# Always on keeps the container loaded, which is what avoids a cold start on the
+# first request after an idle period.
+az webapp config set -g "$RG" -n "$STOREFRONT_APP" --always-on true -o none
+az webapp restart -g "$RG" -n "$STOREFRONT_APP" -o none
 
 # The backend needs to trust the storefront's real origin, which only exists now.
 az webapp config appsettings set -g "$RG" -n "$BACKEND_APP" --settings \

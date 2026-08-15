@@ -55,11 +55,38 @@ fi
 source "$SECRETS_FILE"
 
 # ------------------------------------------------------------ foundation ---
-az group create -n "$RG" -l "$LOCATION" -o none
-echo "Resource group ready."
+# On a shared subscription you may have rights inside a resource group but none
+# at subscription scope, so creating one is forbidden while everything within it
+# is allowed. Reuse the group when it is already there.
+#
+# `az group exists` is not usable for the check: without subscription-scope read
+# it returns Forbidden rather than false. Listing filters to groups you can see,
+# so an empty result means "not visible to you", which is the case that matters.
+if [[ -n "$(az group list --query "[?name=='${RG}'].name" -o tsv)" ]]; then
+  # A group's own location is only metadata. Resources inside it still go to
+  # LOCATION, so reusing an eastus group does not drag the store to eastus.
+  echo "Resource group $RG already exists, using it. Resources go to $LOCATION."
+else
+  if ! az group create -n "$RG" -l "$LOCATION" -o none 2>/dev/null; then
+    echo
+    echo "Cannot create resource group '$RG'."
+    echo
+    echo "This account has no write permission at subscription scope. Either ask"
+    echo "whoever administers the subscription to create '$RG' and grant you"
+    echo "Contributor on it, or point this script at a group you already hold:"
+    echo
+    az group list --query '[].name' -o tsv | sed 's/^/    RG=/;s/$/ .\/infra\/azure\/01-provision.sh/'
+    echo
+    exit 1
+  fi
+  echo "Resource group created."
+fi
 
 # Basic is the cheapest tier that supports the build tasks used below.
-az acr create -g "$RG" -n "$ACR" --sku Basic --admin-enabled true -o none
+# -l is explicit: without it the registry inherits the resource group's region,
+# which is wrong whenever the group was made for something else, and the image
+# then crosses regions on every pull.
+az acr create -g "$RG" -n "$ACR" -l "$LOCATION" --sku Basic --admin-enabled true -o none
 echo "Container registry ready."
 
 # Burstable B1ms is the cheapest tier. Public access is on so App Service can
@@ -70,9 +97,19 @@ az postgres flexible-server create \
   --tier Burstable --sku-name Standard_B1ms \
   --version 16 --storage-size 32 \
   --admin-user "$PG_ADMIN" --admin-password "$PG_PASSWORD" \
-  --database-name "$PG_DB" \
   --public-access 0.0.0.0 \
   --yes -o none
+
+# The database is a separate step. --database-name on the create above now
+# applies only to elastic clusters, and passing it to a normal server is a hard
+# usage error rather than something ignored.
+#
+# -d is deprecated from CLI 2.86, where -n takes over as the database name, so
+# both spellings are attempted. Creating a database that already exists is not
+# an error worth stopping for, which is what the final || covers.
+az postgres flexible-server db create -g "$RG" -s "$PG" -d "$PG_DB" -o none 2>/dev/null \
+  || az postgres flexible-server db create -g "$RG" -s "$PG" -n "$PG_DB" -o none 2>/dev/null \
+  || echo "Database $PG_DB already present, continuing."
 echo "Postgres ready."
 
 # One plan hosts both apps, which is half the compute cost of two.
