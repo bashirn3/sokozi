@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@modules/common/components/ui"
 import { useMemo } from "react"
 

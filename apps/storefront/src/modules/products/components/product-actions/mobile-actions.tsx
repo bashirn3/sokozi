@@ -1,3 +1,5 @@
+"use client"
+
 import { Dialog, Transition } from "@headlessui/react"
 import { Button, clx } from "@modules/common/components/ui"
 import React, { Fragment, useMemo } from "react"

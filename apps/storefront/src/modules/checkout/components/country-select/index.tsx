@@ -1,3 +1,5 @@
+"use client"
+
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react"
 import { shortCountryName } from "@lib/util/country-name"
 

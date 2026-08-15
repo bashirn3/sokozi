@@ -1,20 +1,14 @@
 import { retrieveCustomer } from "@lib/data/customer"
-// TODO: Re-add Toaster component when needed
 import AccountLayout from "@modules/account/templates/account-layout"
 
+// Takes children rather than the @dashboard and @login slots it used to. See
+// account/page.tsx for why the slots were removed.
 export default async function AccountPageLayout({
-  dashboard,
-  login,
+  children,
 }: {
-  dashboard?: React.ReactNode
-  login?: React.ReactNode
+  children: React.ReactNode
 }) {
   const customer = await retrieveCustomer().catch(() => null)
 
-  return (
-    <AccountLayout customer={customer}>
-      {customer ? dashboard : login}
-      {/* TODO: Re-add Toaster component when needed */}
-    </AccountLayout>
-  )
+  return <AccountLayout customer={customer}>{children}</AccountLayout>
 }

@@ -1,6 +1,6 @@
 import React from "react"
 
-import UnderlineLink from "@modules/common/components/interactive-link"
+import { whatsappNumber } from "@lib/util/whatsapp"
 
 import AccountNav from "../components/account-nav"
 import { HttpTypes } from "@medusajs/types"
@@ -21,20 +21,33 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
           <div>{customer && <AccountNav customer={customer} />}</div>
           <div className="flex-1">{children}</div>
         </div>
-        <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
-          <div>
-            <h3 className="text-xl-semi mb-4">Got questions?</h3>
-            <span className="txt-medium">
-              You can find frequently asked questions and answers on our
-              customer service page.
-            </span>
+        {/* This linked to /customer-service, a page that does not exist. Next
+            prefetches links in view, so the dead route was fetched and 404ed on
+            every visit to the account area, and anyone clicking it landed on an
+            error page. WhatsApp is the support channel this store actually has,
+            and the whole block is dropped when no number is configured rather
+            than offering help that goes nowhere. */}
+        {whatsappNumber && (
+          <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
+            <div>
+              <h3 className="text-xl-semi mb-4">Got questions?</h3>
+              <span className="txt-medium">
+                Message us on WhatsApp and we will help you out.
+              </span>
+            </div>
+            <div>
+              <a
+                href={`https://wa.me/${whatsappNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+                data-testid="account-whatsapp-link"
+              >
+                Chat on WhatsApp
+              </a>
+            </div>
           </div>
-          <div>
-            <UnderlineLink href="/customer-service">
-              Customer Service
-            </UnderlineLink>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   )
