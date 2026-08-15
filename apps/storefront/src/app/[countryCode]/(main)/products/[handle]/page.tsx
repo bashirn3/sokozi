@@ -114,11 +114,14 @@ export default async function ProductPage(props: Props) {
     queryParams: { handle: params.handle },
   }).then(({ response }) => response.products[0])
 
-  const images = getImagesForVariant(pricedProduct, selectedVariantId)
-
+  // This check has to come before getImagesForVariant. That helper reads
+  // product.variants, so an unknown handle threw a TypeError and surfaced as a
+  // 500 rather than the intended 404.
   if (!pricedProduct) {
     notFound()
   }
+
+  const images = getImagesForVariant(pricedProduct, selectedVariantId)
 
   return (
     <ProductTemplate
