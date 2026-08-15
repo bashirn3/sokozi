@@ -6,6 +6,16 @@ decisions issued during review.
 Branch: `sokozi-mvp-build`, seven commits, each naming its task IDs.
 `pnpm --filter @dtc/storefront build` passes with error suppression turned off.
 
+> **The deployment target changed after this was written.** Sokozi now deploys to
+> Azure, not Render and Vercel. `render.yaml` and `DEPLOY-BACKEND.md` have been
+> deleted; see [DEPLOY-AZURE.md](./DEPLOY-AZURE.md).
+>
+> This document is left as the record of what was built and why, so references to
+> Render below describe work that was done at the time rather than the current
+> plan. Everything in it about the seed, the publishable key, CORS, and the
+> storefront build needing a live backend still applies, because those are
+> properties of the application rather than of any host.
+
 ## 1. Completed
 
 | ID | Task | Verified by |
@@ -47,30 +57,24 @@ hex          0 outside two documented exceptions
 
 ## 2. Not done, or partially done
 
-### E2, decimal verification. NOT DONE. Blocked.
+### E2, decimal verification. DONE, verified after this was first written.
 
-This is the one task that could not be completed, and it is the one that most
-needs doing before taking money.
+Blocked at the time of writing because no `.env` files existed, contrary to
+correction 1. Test keys were supplied later and the check was run properly.
 
-Correction 1 stated that `STRIPE_API_KEY` and `NEXT_PUBLIC_STRIPE_KEY` were
-already populated in local `.env` files. **No `.env` files existed.** A search
-for `.env*` across the tree returned nothing. They were created during A1 as
-amended, with the Stripe lines left blank for a human to fill.
+**Result: the conversion is correct.** A cart of one earbuds plus City Delivery,
+`TZS 30,000`, produced a real Stripe PaymentIntent carrying **3,000,000 minor
+units** in `tzs`. That is exactly one times-100 conversion, performed by the
+provider. Not 300,000,000, which would be a double conversion, and not 30,000,
+which would be a missing one. No manual conversion exists anywhere in the code.
 
-So nothing about Stripe is verified end to end. Not the checkout, not the
-amount shown on the Stripe page, not the order landing in admin, not inventory
-decrementing.
+`pp_stripe_stripe` is enabled on the Tanzania region, and the storefront shows a
+card form alongside Manual Payment.
 
-To finish it: put your Stripe **test** keys into `apps/backend/.env`
-(`STRIPE_API_KEY`) and `apps/storefront/.env.local` (`NEXT_PUBLIC_STRIPE_KEY`),
-enable `pp_stripe_stripe` on the Tanzania region in admin, then run a checkout
-with `4242 4242 4242 4242`.
-
-What to watch for, since TZS is a two decimal currency in Stripe and 25,000 TZS
-is 2,500,000 minor units: the cart must read `TSh 25,000` and the Stripe page
-must read the same amount. `2,500,000` means a double conversion, `250` means a
-missing one. No manual conversion was added anywhere, so the provider's own
-conversion is the only one in play.
+Still outstanding on payments: `STRIPE_WEBHOOK_SECRET` is blank, because a
+webhook endpoint cannot exist until the backend has a public URL. Card payments
+complete without it, but asynchronous confirmations will not arrive. That is a
+post-deploy step.
 
 ### B2, known limitation
 
@@ -86,7 +90,8 @@ want the cold-start experience to show the hero, that is a small follow-up.
 
 Everything in section 9 stayed out of scope: mobile money, TRA fiscal
 receipting, PDPC registration, Swahili, Algolia, Tanzanian address model, Redis
-and worker separation, S3 or Azure file storage, Azure migration.
+and worker separation, and S3 file storage. Azure was on that list too and is
+now the deployment target, see DEPLOY-AZURE.md.
 
 ## 3. BUILD-ERRORS.md summary
 
@@ -189,7 +194,7 @@ Also confirmed:
 |---|---|---|
 | H3b | Stripe **live** keys and live webhook secret | Real payments. The webhook endpoint cannot exist until the backend has a public URL, so this is necessarily post-deploy. |
 | New | Stripe **test** keys | E2. Nothing about checkout is verified without them. See section 2. |
-| H4 | Render and Vercel dashboard access | Actually deploying. Configuration is prepared and documented. |
+| H4 | Azure subscription access | Actually deploying. Configuration is prepared and documented. |
 | H6 | Real product photography | All ten images are Unsplash placeholders. |
 | Spec | Mobile QA on a real mid-range Android at throttled 3G | Explicitly a human task, and explicitly not optional. Nothing in this build substitutes for it. All verification here was programmatic: HTTP status, rendered markup, the served CSS bundle and database state. Nobody has looked at this design on a phone. |
 
@@ -354,7 +359,7 @@ what the brief specifies.
 
 - **`MEDUSA_BACKEND_URL` is a no-op.** The Phase G env list includes it, but
   `src/lib/config.ts` only ever reads `NEXT_PUBLIC_MEDUSA_BACKEND_URL`. The
-  unprefixed variable is never read. Documented in `DEPLOY-BACKEND.md`.
+  unprefixed variable is never read. Documented in `DEPLOY-AZURE.md`.
 - **The Vercel build needs the backend awake.** Category and product pages
   prerender through `generateStaticParams`, which calls the backend. Deploy the
   backend first and confirm `/health`. Documented as a trap.
@@ -382,7 +387,7 @@ cd apps/storefront && pnpm dev             # http://localhost:8000/tz
 ```
 
 Local admin is `admin@sokozi.co.tz` with password `supersecret`. That is a local
-development credential only. `DEPLOY-BACKEND.md` covers generating and rotating a
+development credential only. `DEPLOY-AZURE.md` covers generating and rotating a
 real one.
 
 The local database was dropped and recreated during C2 and C3 verification, so

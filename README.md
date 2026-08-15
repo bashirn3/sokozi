@@ -46,12 +46,12 @@ cd apps/storefront && pnpm dev
 
 ## Deploy
 
-The backend runs on Render and the storefront on Vercel. The backend cannot run
-on Vercel: it needs PostgreSQL and a long-running server.
+Both apps deploy to Azure. The backend needs PostgreSQL and a long-running Node
+process, so it cannot run on a serverless host.
 
-`render.yaml` is the blueprint. See [DEPLOY-BACKEND.md](./DEPLOY-BACKEND.md) for
-the full procedure, including the one-time admin user step and the reason you
-must not run the seed by hand.
+See [DEPLOY-AZURE.md](./DEPLOY-AZURE.md) for the architecture, costs, and the
+traps worth knowing before the first deploy, including the one-time admin user
+step and why you must not run the seed by hand.
 
 ## Next steps
 
