@@ -59,7 +59,7 @@ const SOKOZI_PRODUCTS = [
     price: 10000,
     sku: "SOKOZI-CHARGER",
     image:
-      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1520287636485-66d0e25add79?w=800&auto=format&fit=crop",
     deal: true,
   },
   {
@@ -80,7 +80,7 @@ const SOKOZI_PRODUCTS = [
     price: 15000,
     sku: "SOKOZI-LED",
     image:
-      "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1572249930263-64fc5bbdb14b?w=800&auto=format&fit=crop",
     deal: true,
   },
   {
@@ -131,7 +131,7 @@ const SOKOZI_PRODUCTS = [
     price: 20000,
     sku: "SOKOZI-CONTAINERS",
     image:
-      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1621318551436-68573392fd5c?w=800&auto=format&fit=crop",
   },
   {
     title: "Shea Butter Moisturizer",

@@ -1,4 +1,5 @@
 "use client"
+import { shortCountryName } from "@lib/util/country-name"
 
 import {
   Listbox,
@@ -40,7 +41,7 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
         return r.countries?.map((c) => ({
           country: c.iso_2 ?? "",
           region: r.id,
-          label: c.display_name ?? "",
+          label: shortCountryName(c.display_name),
         }))
       })
       .flat()
