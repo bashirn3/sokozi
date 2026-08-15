@@ -16,6 +16,12 @@ export const listRegions = async () => {
       cache: "force-cache",
     })
     .then(({ regions }) => regions)
+    .catch(() => {
+      // The backend is unreachable, most often a cold start. Fail soft so the
+      // page still renders instead of throwing a 500 out of the layout.
+      console.error("listRegions: backend unreachable, returning empty list")
+      return [] as HttpTypes.StoreRegion[]
+    })
 }
 
 export const retrieveRegion = async (id: string) => {

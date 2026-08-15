@@ -135,7 +135,7 @@ const OptionsPicker = ({
                         key={value.id}
                         onClick={() => toggleValue(value.id)}
                         className={clsx(
-                          "border-ui-border-base border text-small-regular h-10 rounded-rounded px-3 flex items-center transition-colors duration-150",
+                          "border-ui-border-base border text-small-regular h-10 rounded px-3 flex items-center transition-colors duration-150",
                           {
                             "border-ui-border-interactive text-ui-fg-base":
                               isSelected,

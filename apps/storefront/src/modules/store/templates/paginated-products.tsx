@@ -13,11 +13,13 @@ type PaginatedProductsParams = {
   category_id?: string[]
   id?: string[]
   order?: string
+  q?: string
 }
 
 export default async function PaginatedProducts({
   sortBy,
   page,
+  q,
   collectionId,
   categoryId,
   productsIds,
@@ -26,6 +28,7 @@ export default async function PaginatedProducts({
 }: {
   sortBy?: SortOptions
   page: number
+  q?: string
   collectionId?: string
   categoryId?: string
   productsIds?: string[]
@@ -34,6 +37,10 @@ export default async function PaginatedProducts({
 }) {
   const queryParams: PaginatedProductsParams = {
     limit: 12,
+  }
+
+  if (q) {
+    queryParams["q"] = q
   }
 
   if (collectionId) {
@@ -69,6 +76,16 @@ export default async function PaginatedProducts({
   })
 
   const totalPages = Math.ceil(count / PRODUCT_LIMIT)
+
+  if (!products.length) {
+    return (
+      <p className="body text-ink-muted" data-testid="no-products-message">
+        {q
+          ? `No products match "${q}". Try a different search.`
+          : "No products found."}
+      </p>
+    )
+  }
 
   return (
     <>

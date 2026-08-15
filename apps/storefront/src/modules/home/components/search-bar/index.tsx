@@ -1,35 +1,51 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useState } from "react"
 
-const SearchBar = () => {
+type SearchBarProps = {
+  defaultValue?: string
+}
+
+const SearchBar = ({ defaultValue = "" }: SearchBarProps) => {
   const router = useRouter()
-  const [query, setQuery] = useState("")
+  const params = useParams()
+  const [query, setQuery] = useState(defaultValue)
+
+  // Keep the region prefix on the URL. Pushing a bare /store would still work
+  // through a middleware redirect, but that is an extra round trip per search.
+  const countryCode = (params?.countryCode as string) ?? ""
+  const basePath = countryCode ? `/${countryCode}/store` : "/store"
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault()
     const trimmed = query.trim()
-    if (trimmed) {
-      router.push(`/store?q=${encodeURIComponent(trimmed)}`)
-      return
-    }
-    router.push("/store")
+    router.push(
+      trimmed ? `${basePath}?q=${encodeURIComponent(trimmed)}` : basePath
+    )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="w-full" role="search">
       <label htmlFor="sokozi-search" className="sr-only">
         Search products
       </label>
-      <input
-        id="sokozi-search"
-        type="search"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search products..."
-        className="w-full rounded-full border border-ui-border-base bg-white px-5 py-3 text-sm text-ui-fg-base placeholder:text-ui-fg-muted focus:outline-none focus:ring-2 focus:ring-emerald-500"
-      />
+      <div className="flex gap-2">
+        <input
+          id="sokozi-search"
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search products"
+          className="body w-full rounded border border-hairline bg-paper px-4 py-3 text-ink placeholder:text-ink-muted"
+        />
+        <button
+          type="submit"
+          className="label rounded bg-ink px-5 text-paper transition-colors hover:bg-ink-muted"
+        >
+          Search
+        </button>
+      </div>
     </form>
   )
 }

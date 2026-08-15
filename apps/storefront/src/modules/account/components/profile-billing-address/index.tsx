@@ -1,4 +1,5 @@
 "use client"
+import { shortCountryName } from "@lib/util/country-name"
 
 import React, { useActionState, useEffect, useMemo } from "react"
 
@@ -24,7 +25,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
         ?.map((region) => {
           return region.countries?.map((country) => ({
             value: country.iso_2,
-            label: country.display_name,
+            label: shortCountryName(country.display_name),
           }))
         })
         .flat() || []

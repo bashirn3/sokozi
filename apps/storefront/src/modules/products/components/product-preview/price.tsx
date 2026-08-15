@@ -1,5 +1,5 @@
-import { Text, clx } from "@modules/common/components/ui"
 import { VariantPrice } from "types/global"
+import PriceBlock from "../price-block"
 
 export default async function PreviewPrice({ price }: { price: VariantPrice }) {
   if (!price) {
@@ -7,23 +7,20 @@ export default async function PreviewPrice({ price }: { price: VariantPrice }) {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-1">
+      <PriceBlock
+        amount={price.calculated_price_number}
+        currencyCode={price.currency_code}
+        testId="price"
+      />
       {price.price_type === "sale" && (
-        <Text
-          className="line-through text-ui-fg-muted"
+        <span
+          className="label text-ink-muted line-through"
           data-testid="original-price"
         >
           {price.original_price}
-        </Text>
+        </span>
       )}
-      <Text
-        className={clx("text-ui-fg-muted", {
-          "text-ui-fg-interactive": price.price_type === "sale",
-        })}
-        data-testid="price"
-      >
-        {price.calculated_price}
-      </Text>
-    </>
+    </div>
   )
 }

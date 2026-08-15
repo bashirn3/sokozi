@@ -24,6 +24,11 @@ export const listCategories = async (query?: Record<string, unknown>) => {
       }
     )
     .then(({ product_categories }) => product_categories)
+    .catch(() => {
+      // Backend unreachable. Fail soft so the layout still renders.
+      console.error("listCategories: backend unreachable, returning empty list")
+      return [] as HttpTypes.StoreProductCategory[]
+    })
 }
 
 export const getCategoryByHandle = async (categoryHandle: string[]) => {

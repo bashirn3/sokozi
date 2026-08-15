@@ -1,31 +1,23 @@
-import { Heading, Text } from "@modules/common/components/ui";
-import SearchBar from "@modules/home/components/search-bar";
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 const Hero = () => {
   return (
-    <div className="w-full border-b border-ui-border-base bg-gradient-to-br from-emerald-950 via-emerald-900 to-black text-white">
-      <div className="content-container py-12 small:py-16 flex flex-col gap-8">
-        <div className="flex flex-col gap-3 max-w-2xl">
-          <Text className="text-emerald-300 text-sm uppercase tracking-[0.2em]">
-            Soko Yako Mkononi
-          </Text>
-          <Heading
-            level="h1"
-            className="text-4xl small:text-5xl leading-tight font-semibold text-white"
-          >
-            Welcome to Sokozi
-          </Heading>
-          <Text className="text-emerald-100 text-base small:text-lg">
-            Tanzania&apos;s mobile-first marketplace. Discover trending products,
-            pay with mobile money, and get same-day delivery in the city.
-          </Text>
-        </div>
-        <div className="max-w-xl">
-          <SearchBar />
-        </div>
+    <section className="w-full bg-ink text-paper">
+      <div className="content-container py-16 small:py-24 flex flex-col items-start gap-6">
+        <h1 className="display max-w-[12ch]">Soko Yako Mkononi</h1>
+        <p className="body max-w-[46ch] text-paper-shade">
+          Your market in your hand. Electronics, fashion, home and beauty,
+          priced in shillings and shipped from Dar es Salaam.
+        </p>
+        <LocalizedClientLink
+          href="/store"
+          className="label rounded bg-marigold px-6 py-4 text-ink transition-colors hover:bg-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
+        >
+          Shop all products
+        </LocalizedClientLink>
       </div>
-    </div>
-  );
-};
+    </section>
+  )
+}
 
-export default Hero;
+export default Hero

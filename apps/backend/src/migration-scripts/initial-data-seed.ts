@@ -22,6 +22,22 @@ import {
   linkSalesChannelsToStockLocationWorkflow,
 } from "@medusajs/medusa/core-flows";
 
+// Category tile imagery, stored on the category so it can be changed from
+// admin later without a deploy. The storefront falls back to its own copy of
+// this map for databases seeded before these were added.
+//
+// Every image here is a verified photograph. See the note in
+// apps/storefront/src/lib/constants/category-images.ts before changing any.
+const SOKOZI_CATEGORY_IMAGES = {
+  Electronics:
+    "https://images.unsplash.com/photo-1547489401-fcada4966052?w=1200&auto=format&fit=crop",
+  Fashion:
+    "https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=1200&auto=format&fit=crop",
+  Home: "https://images.unsplash.com/photo-1556912173-46c336c7fd55?w=1200&auto=format&fit=crop",
+  Beauty:
+    "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1200&auto=format&fit=crop",
+} as const;
+
 const SOKOZI_PRODUCTS = [
   {
     title: "Wireless Earbuds V5",
@@ -43,7 +59,7 @@ const SOKOZI_PRODUCTS = [
     price: 10000,
     sku: "SOKOZI-CHARGER",
     image:
-      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1520287636485-66d0e25add79?w=800&auto=format&fit=crop",
     deal: true,
   },
   {
@@ -54,7 +70,7 @@ const SOKOZI_PRODUCTS = [
     price: 35000,
     sku: "SOKOZI-POWERBANK",
     image:
-      "https://images.unsplash.com/photo-1609091839311-9a322d2181a8?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1566554738544-d962991c3fee?w=800&auto=format&fit=crop",
   },
   {
     title: "LED Lights Pack",
@@ -64,7 +80,7 @@ const SOKOZI_PRODUCTS = [
     price: 15000,
     sku: "SOKOZI-LED",
     image:
-      "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1572249930263-64fc5bbdb14b?w=800&auto=format&fit=crop",
     deal: true,
   },
   {
@@ -105,7 +121,7 @@ const SOKOZI_PRODUCTS = [
     price: 45000,
     sku: "SOKOZI-BLENDER",
     image:
-      "https://images.unsplash.com/photo-1570222094114-d054a817e56a?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1512203864638-f6cbb3cca374?w=800&auto=format&fit=crop",
   },
   {
     title: "Storage Containers Set",
@@ -115,7 +131,19 @@ const SOKOZI_PRODUCTS = [
     price: 20000,
     sku: "SOKOZI-CONTAINERS",
     image:
-      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1621318551436-68573392fd5c?w=800&auto=format&fit=crop",
+  },
+  {
+    title: "Shea Butter Moisturizer",
+    handle: "shea-butter-moisturizer",
+    category: "Beauty",
+    description:
+      "Rich shea butter moisturizer for daily skin care. Unscented and gentle enough for everyday use.",
+    price: 12000,
+    sku: "SOKOZI-SHEA",
+    image:
+      "https://images.unsplash.com/photo-1606755612769-5655c261e8ce?w=800&auto=format&fit=crop",
+    deal: true,
   },
 ] as const;
 
@@ -133,6 +161,25 @@ export default async function initial_data_seed({
 
   const countries = ["tz"];
 
+  // Guard against a second run.
+  //
+  // medusa db:migrate records this script in the script_migrations table and
+  // will not repeat it, but medusa exec and pnpm backend:seed both bypass that
+  // tracking entirely. Without this check a second run duplicates the store,
+  // region, sales channel, publishable key and warehouse, then fails on the
+  // duplicate product handles, leaving the database in a broken half state.
+  const { data: existingStores } = await query.graph({
+    entity: "store",
+    fields: ["id"],
+  });
+
+  if (existingStores.length) {
+    logger.info(
+      "Sokozi seed skipped: a store already exists. Nothing was changed."
+    );
+    return;
+  }
+
   logger.info("Seeding Sokozi store data...");
   const {
     result: [defaultSalesChannel],
@@ -141,7 +188,7 @@ export default async function initial_data_seed({
       salesChannelsData: [
         {
           name: "Sokozi Store",
-          description: "Soko Yako Mkononi — Tanzania mobile marketplace",
+          description: "Soko Yako Mkononi — Tanzania mobile store",
         },
       ],
     },
@@ -276,7 +323,9 @@ export default async function initial_data_seed({
         shipping_profile_id: shippingProfile.id,
         type: {
           label: "Standard",
-          description: "Delivery in 1–24 hours within Dar es Salaam.",
+          // No delivery window is stated anywhere. The brief specifies option
+          // names and prices only, so a duration here would be invented.
+          description: "Flat-rate delivery from our Dar es Salaam warehouse.",
           code: "city-delivery",
         },
         prices: [
@@ -310,7 +359,9 @@ export default async function initial_data_seed({
         shipping_profile_id: shippingProfile.id,
         type: {
           label: "Express",
-          description: "Same or next-day delivery in major cities.",
+          // The option name comes from the brief and does imply a timing
+          // commitment. The description adds nothing on top of it.
+          description: "Priority handling from our Dar es Salaam warehouse.",
           code: "express",
         },
         prices: [
@@ -352,10 +403,26 @@ export default async function initial_data_seed({
   ).run({
     input: {
       product_categories: [
-        { name: "Electronics", is_active: true },
-        { name: "Fashion", is_active: true },
-        { name: "Home", is_active: true },
-        { name: "Beauty", is_active: true },
+        {
+          name: "Electronics",
+          is_active: true,
+          metadata: { image_url: SOKOZI_CATEGORY_IMAGES.Electronics },
+        },
+        {
+          name: "Fashion",
+          is_active: true,
+          metadata: { image_url: SOKOZI_CATEGORY_IMAGES.Fashion },
+        },
+        {
+          name: "Home",
+          is_active: true,
+          metadata: { image_url: SOKOZI_CATEGORY_IMAGES.Home },
+        },
+        {
+          name: "Beauty",
+          is_active: true,
+          metadata: { image_url: SOKOZI_CATEGORY_IMAGES.Beauty },
+        },
       ],
     },
   });

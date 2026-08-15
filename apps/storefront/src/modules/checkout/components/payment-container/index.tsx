@@ -34,7 +34,7 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
       value={paymentProviderId}
       disabled={disabled}
       className={clx(
-        "flex flex-col gap-y-2 text-small-regular cursor-pointer py-4 border rounded-rounded px-8 mb-2 hover:shadow-borders-interactive-with-active",
+        "flex flex-col gap-y-2 text-small-regular cursor-pointer py-4 border rounded px-8 mb-2 hover:border-ink",
         {
           "border-ui-border-interactive":
             selectedPaymentOptionId === paymentProviderId,
@@ -82,17 +82,20 @@ export const StripeCardContainer = ({
 
   const useOptions: StripeCardElementOptions = useMemo(() => {
     return {
+      // Stripe renders the card field inside its own iframe, so it cannot read
+      // our CSS variables. These have to be literal values. They are kept in
+      // step with --ink and --ink-muted in src/styles/tokens.css by hand.
       style: {
         base: {
-          fontFamily: "Inter, sans-serif",
-          color: "#424270",
+          fontFamily: "system-ui, sans-serif",
+          color: "#14110e",
           "::placeholder": {
-            color: "rgb(107 114 128)",
+            color: "#6b645b",
           },
         },
       },
       classes: {
-        base: "pt-3 pb-1 block w-full h-11 px-4 mt-0 bg-ui-bg-field border rounded-md appearance-none focus:outline-none focus:ring-0 focus:shadow-borders-interactive-with-active border-ui-border-base hover:bg-ui-bg-field-hover transition-all duration-300 ease-in-out",
+        base: "pt-3 pb-1 block w-full h-11 px-4 mt-0 bg-ui-bg-field border rounded appearance-none focus:outline-none focus:ring-0 focus:border-ink border-ui-border-base hover:bg-ui-bg-field-hover transition-all duration-300 ease-in-out",
       },
     }
   }, [])

@@ -11,7 +11,7 @@ import { getRegion } from "@lib/data/regions"
 export const metadata: Metadata = {
   title: "Sokozi — Soko Yako Mkononi",
   description:
-    "Mobile-first marketplace for Tanzania. Shop electronics, fashion, home goods and pay with mobile money.",
+    "Mobile-first store for Tanzania. Shop electronics, fashion, home goods and beauty, priced in TZS and delivered across Dar es Salaam.",
 }
 
 export default async function Home(props: {

@@ -20,6 +20,19 @@ module.exports = {
         padding: "padding-top padding-right padding-bottom padding-left",
       },
       colors: {
+        // Sokozi tokens. Values live in src/styles/tokens.css.
+        paper: "var(--paper)",
+        "paper-shade": "var(--paper-shade)",
+        ink: "var(--ink)",
+        "ink-muted": "var(--ink-muted)",
+        hairline: "var(--hairline)",
+        marigold: "var(--marigold)",
+        "cat-electronics": "var(--cat-electronics)",
+        "cat-fashion": "var(--cat-fashion)",
+        "cat-home": "var(--cat-home)",
+        "cat-beauty": "var(--cat-beauty)",
+        ok: "var(--ok)",
+        error: "var(--error)",
         grey: {
           0: "#FFFFFF",
           5: "#F9FAFB",
@@ -35,6 +48,9 @@ module.exports = {
         },
       },
       borderRadius: {
+        // One radius for cards, buttons, inputs and containers.
+        // rounded-full stays available for genuinely circular controls.
+        DEFAULT: "var(--radius)",
         none: "0px",
         soft: "2px",
         base: "4px",

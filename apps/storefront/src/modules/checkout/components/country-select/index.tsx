@@ -1,4 +1,5 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react"
+import { shortCountryName } from "@lib/util/country-name"
 
 import NativeSelect, {
   NativeSelectProps,
@@ -25,7 +26,7 @@ const CountrySelect = forwardRef<
 
     return region.countries?.map((country) => ({
       value: country.iso_2,
-      label: country.display_name,
+      label: shortCountryName(country.display_name),
     }))
   }, [region])
 

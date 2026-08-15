@@ -1,30 +1,35 @@
 # Sokozi
 
-**Soko Yako Mkononi** — a mobile-first ecommerce marketplace for Tanzania, built on [Medusa](https://medusajs.com) with the Next.js starter storefront.
+**Soko Yako Mkononi**. A mobile-first ecommerce store for Tanzania.
 
 ## What's included
 
-- **Backend** (`apps/backend`) — Medusa commerce engine with Tanzania region, TZS currency, and seeded catalog
-- **Storefront** (`apps/storefront`) — Mobile-first Next.js shop with Sokozi branding
-- **Products** — Electronics, Fashion, Home categories with prices from your business plan (TZS)
-- **Shipping** — City delivery TZS 5,000 / Express TZS 8,000
-- **UI features** — Search, Today's Deals carousel, TikTok-style product feed, WhatsApp order button, M-Pesa placeholder
+- **Backend** (`apps/backend`): Medusa commerce engine with Tanzania region, TZS currency, and seeded catalog
+- **Storefront** (`apps/storefront`): Mobile-first Next.js shop with Sokozi branding
+- **Products**: Electronics, Fashion, Home and Beauty categories, priced in TZS
+- **Shipping**: City delivery TZS 5,000 / Express TZS 8,000
+- **UI features**: Product search, Today's Deals rail, horizontal product feed, and a WhatsApp order button that appears only when a number is configured
 
 ## Prerequisites
 
-- Node.js 20–24 (Node 25+ is not supported)
-- PostgreSQL running locally
-- pnpm
+- Node.js 20 to 22 (Node 25 is not supported)
+- PostgreSQL 15 or newer, running locally
+- pnpm 10.29.1 (`corepack enable`)
+
+Copy `apps/backend/.env.template` to `apps/backend/.env` and
+`apps/storefront/.env.template` to `apps/storefront/.env.local`, then fill them
+in. The storefront build exits with a missing variable error if
+`NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` is unset.
 
 ## Local development
 
 ```bash
 cd sokozi
 
-# Terminal 1 — backend
+# Terminal 1, backend
 cd apps/backend && pnpm dev
 
-# Terminal 2 — storefront
+# Terminal 2, storefront
 cd apps/storefront && pnpm dev
 ```
 
@@ -39,25 +44,21 @@ cd apps/storefront && pnpm dev
 - Email: `admin@sokozi.co.tz`
 - Password: `supersecret`
 
-## Deploy to Medusa Cloud
+## Deploy
 
-1. Install the Cloud CLI: `npm install -g @medusajs/mcloud`
-2. Sign up / log in: `mcloud signup` then `mcloud login`
-3. Push this repo to GitHub
-4. Create a project at [cloud.medusajs.com](https://cloud.medusajs.com):
-   - **Project root**: `apps/backend`
-   - **Storefront root**: `apps/storefront`
-   - **Region**: `ap-southeast-1` (closest to Tanzania)
-   - **Subdomain**: e.g. `sokozi-store`
+The backend runs on Render and the storefront on Vercel. The backend cannot run
+on Vercel: it needs PostgreSQL and a long-running server.
 
-See [Medusa Cloud docs](https://docs.medusajs.com/cloud/projects).
+`render.yaml` is the blueprint. See [DEPLOY-BACKEND.md](./DEPLOY-BACKEND.md) for
+the full procedure, including the one-time admin user step and the reason you
+must not run the seed by hand.
 
 ## Next steps
 
-- Connect real M-Pesa / Airtel Money / Tigo Pesa payment providers
-- Set `NEXT_PUBLIC_WHATSAPP_NUMBER` to your business WhatsApp
-- Upload product photos and videos in the admin dashboard
-- Add Beauty category products
+- Set `NEXT_PUBLIC_WHATSAPP_NUMBER` to the business WhatsApp number
+- Configure a file storage provider before uploading product images. Without
+  one, admin uploads are written to local disk and vanish on the next deploy.
+- Replace the Unsplash placeholder images with real product photography
 
 ## Catalog (TZS)
 
@@ -66,3 +67,4 @@ See [Medusa Cloud docs](https://docs.medusajs.com/cloud/projects).
 | Electronics | Earbuds 25,000 · Charger 10,000 · Power bank 35,000 · LED lights 15,000 |
 | Fashion | T-shirt 15,000 · Cap 10,000 · Sneakers 60,000 |
 | Home | Blender 45,000 · Containers 20,000 |
+| Beauty | Shea butter moisturizer 12,000 |

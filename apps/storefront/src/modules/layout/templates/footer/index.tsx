@@ -1,9 +1,9 @@
 import { listCategories } from "@lib/data/categories";
+import { whatsappNumber } from "@lib/util/whatsapp";
 import { listCollections } from "@lib/data/collections";
 import { Text, clx } from "@modules/common/components/ui";
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
-import MedusaCTA from "@modules/layout/components/medusa-cta";
 
 export default async function Footer() {
   const { collections } = await listCollections({
@@ -14,11 +14,11 @@ export default async function Footer() {
   return (
     <footer className="border-t border-ui-border-base w-full">
       <div className="content-container flex flex-col w-full">
-        <div className="flex flex-col gap-y-6 xsmall:flex-row items-start justify-between py-40">
+        <div className="flex flex-col gap-y-6 xsmall:flex-row items-start justify-between py-16">
           <div>
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase text-emerald-800"
+              className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase text-ink"
             >
               Sokozi
             </LocalizedClientLink>
@@ -111,9 +111,9 @@ export default async function Footer() {
             <div className="flex flex-col gap-y-2">
               <span className="txt-small-plus txt-ui-fg-base">Sokozi</span>
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
-                <li>Mobile money checkout</li>
-                <li>WhatsApp ordering</li>
-                <li>Same-day delivery in Dar es Salaam</li>
+                <li>Prices in TZS</li>
+                {whatsappNumber && <li>WhatsApp ordering</li>}
+                <li>Flat-rate delivery from Dar es Salaam</li>
               </ul>
             </div>
           </div>
@@ -122,7 +122,6 @@ export default async function Footer() {
           <Text className="txt-compact-small">
             © {new Date().getFullYear()} Sokozi. Soko Yako Mkononi.
           </Text>
-          <MedusaCTA />
         </div>
       </div>
     </footer>
