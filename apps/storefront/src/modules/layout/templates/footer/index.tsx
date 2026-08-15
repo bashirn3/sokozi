@@ -114,7 +114,7 @@ export default async function Footer() {
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
                 <li>Prices in TZS</li>
                 {whatsappNumber && <li>WhatsApp ordering</li>}
-                <li>Delivery in 1 to 24 hours</li>
+                <li>Flat-rate delivery from Dar es Salaam</li>
               </ul>
             </div>
           </div>

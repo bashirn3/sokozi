@@ -307,7 +307,9 @@ export default async function initial_data_seed({
         shipping_profile_id: shippingProfile.id,
         type: {
           label: "Standard",
-          description: "Delivery in 1–24 hours within Dar es Salaam.",
+          // No delivery window is stated anywhere. The brief specifies option
+          // names and prices only, so a duration here would be invented.
+          description: "Flat-rate delivery from our Dar es Salaam warehouse.",
           code: "city-delivery",
         },
         prices: [
@@ -341,7 +343,9 @@ export default async function initial_data_seed({
         shipping_profile_id: shippingProfile.id,
         type: {
           label: "Express",
-          description: "Same or next-day delivery in major cities.",
+          // The option name comes from the brief and does imply a timing
+          // commitment. The description adds nothing on top of it.
+          description: "Priority handling from our Dar es Salaam warehouse.",
           code: "express",
         },
         prices: [

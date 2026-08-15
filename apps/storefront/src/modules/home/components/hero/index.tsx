@@ -7,7 +7,7 @@ const Hero = () => {
         <h1 className="display max-w-[12ch]">Soko Yako Mkononi</h1>
         <p className="body max-w-[46ch] text-paper-shade">
           Your market in your hand. Electronics, fashion, home and beauty,
-          delivered across Dar es Salaam in 1 to 24 hours.
+          priced in shillings and shipped from Dar es Salaam.
         </p>
         <LocalizedClientLink
           href="/store"

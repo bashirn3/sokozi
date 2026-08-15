@@ -193,11 +193,62 @@ Also confirmed:
 | H6 | Real product photography | All ten images are Unsplash placeholders. |
 | Spec | Mobile QA on a real mid-range Android at throttled 3G | Explicitly a human task, and explicitly not optional. Nothing in this build substitutes for it. All verification here was programmatic: HTTP status, rendered markup, the served CSS bundle and database state. Nobody has looked at this design on a phone. |
 
+### Accepted risk: delivery is sold nationwide at the city rate
+
+Recorded here because it was raised, understood and accepted, not because it is
+unresolved.
+
+The fulfillment set has a single geo zone of `type: country`, `country_code:
+tz`. Both shipping options are therefore offered to **every address in
+Tanzania**:
+
+| Option | Price | Actually available |
+|---|---|---|
+| City Delivery | TZS 5,000 | Anywhere in Tanzania |
+| Same/Next Day Express | TZS 8,000 | Anywhere in Tanzania |
+
+An order to Mwanza, roughly 1,100 km from the Dar es Salaam warehouse, is quoted
+the same TZS 5,000 as an order across the city. The store is committing to
+fulfil it at that price.
+
+The recommendation was to scope City Delivery to a Dar es Salaam geo zone, which
+Medusa supports at city and province level. The decision was to leave coverage
+as it is and correct only the copy. That is a business call, not a defect, and
+the code reflects it.
+
+If it is ever revisited, the change is a `geo_zones` entry on the service zone
+in the seed plus an admin change on any existing database.
+
+**A separate note on the Express option name.** "Same/Next Day Express" comes
+from the brief and is unchanged. The name itself is a timing commitment, and it
+is the only one left anywhere in the product. Nothing else states a duration.
+
 Two things that need a decision rather than an action:
 
 **The WhatsApp number is Nigerian.** You supplied `2347067131336`. Country code
 `234` is Nigeria; Tanzania is `255`. The button renders and links correctly
 either way, so this is only a problem if it was a paste error.
+
+**The Beauty product image is AI-generated, and I shipped it.** The image chosen
+for Shea Butter Moisturizer in C2 was uploaded to Unsplash on 2026-05-02. All
+nine pre-existing seed images date from 2017 to 2020. Every one of the 19
+results from the Unsplash search used was uploaded in 2026, so that search was
+returning generated content almost exclusively.
+
+The image itself carries the tells: the label reads "JOPULENCE", which is not a
+word, and the fine print beneath it is warped. I looked at the image before
+using it and noted only that it was "mildly branded". I checked that the URL
+returned a real JPEG and that it depicted a shea butter jar. I never asked
+whether the photograph was real.
+
+Worth recording for whoever replaces these: the five candidates rejected during
+that same task, from 2019 to 2021, were all genuine photographs of real
+products. Visible brand packaging was the signal of authenticity, and it was
+mistaken for a reason to reject them.
+
+Fix is one line in the seed. Left in place because all ten images are
+placeholders due for replacement anyway under H6, but it should not go in front
+of a customer.
 
 **Product images must not be uploaded yet.** No file storage provider is
 configured, so admin uploads write to the container's local disk, which Render
@@ -280,7 +331,26 @@ four total. It appeared **three** times overall: once in the README, once in the
 seed's sales channel description, once in the home page metadata. All three
 fixed.
 
-### 8.8 Smaller notes
+### 8.8 The delivery timings were never in the brief, and I amplified them
+
+The brief specifies two shipping options, two prices and one Dar es Salaam
+warehouse. It states no delivery window at all.
+
+"Delivery in 1-24 hours" was already in the repo before this work, in the seed's
+shipping option description and in small text on the product page. During F1 I
+promoted that unverified claim into the **hero**, the first sentence on the
+site, and the **footer**, on every page. In the footer I did it while replacing
+"Same-day delivery in Dar es Salaam" and describing the result as making the
+copy honest, which it was not: one unsubstantiated timing promise was swapped
+for another.
+
+Corrected after review. No duration is now stated anywhere in the product. The
+seed descriptions are neutral, the hero and footer make no timing claim, and the
+product page says only "In stock in Dar es Salaam". Checkout renders the option
+name and price and never the description, so what a customer sees is exactly
+what the brief specifies.
+
+### 8.9 Smaller notes
 
 - **`MEDUSA_BACKEND_URL` is a no-op.** The Phase G env list includes it, but
   `src/lib/config.ts` only ever reads `NEXT_PUBLIC_MEDUSA_BACKEND_URL`. The

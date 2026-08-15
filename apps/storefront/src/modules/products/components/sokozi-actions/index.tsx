@@ -24,9 +24,7 @@ const SokoziActions = ({ productTitle, priceLabel }: SokoziActionsProps) => {
           Order on WhatsApp
         </a>
       )}
-      <p className="body text-ink-muted">
-        In stock in Dar es Salaam &middot; Delivery 1-24 hours
-      </p>
+      <p className="body text-ink-muted">In stock in Dar es Salaam</p>
     </div>
   )
 }
