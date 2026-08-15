@@ -8,6 +8,15 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 // backend failing to boot.
 const stripeApiKey = process.env.STRIPE_API_KEY
 
+// S3-compatible object storage for admin image uploads. Configured for
+// Cloudflare R2, but the same provider works with AWS S3, Backblaze B2 or any
+// other S3-compatible store, which is why nothing here is host specific.
+//
+// Without it Medusa falls back to local disk, and on a container host that disk
+// is replaced on every deploy, so uploaded images disappear. Registration is
+// gated on the bucket being set so local development works untouched.
+const s3Bucket = process.env.S3_BUCKET
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -20,6 +29,43 @@ module.exports = defineConfig({
     }
   },
   modules: [
+    ...(s3Bucket
+      ? [
+          {
+            resolve: "@medusajs/medusa/file",
+            options: {
+              providers: [
+                {
+                  resolve: "@medusajs/medusa/file-s3",
+                  id: "s3",
+                  // These option names are snake_case. The provider class
+                  // exposes a camelCase config internally, but the options it
+                  // accepts are S3FileServiceOptions from
+                  // @medusajs/framework/types, which is snake_case. Passing
+                  // camelCase fails at boot with "Access key ID and secret
+                  // access key are required".
+                  options: {
+                    // Public base URL images are served from. For R2 this is
+                    // the bucket's public r2.dev address or a custom domain.
+                    file_url: process.env.S3_FILE_URL,
+                    access_key_id: process.env.S3_ACCESS_KEY_ID,
+                    secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
+                    // R2 ignores region but the SDK requires one.
+                    region: process.env.S3_REGION || "auto",
+                    bucket: s3Bucket,
+                    endpoint: process.env.S3_ENDPOINT,
+                    // R2 rejects requests carrying an ACL header, so the
+                    // provider has to omit it entirely. Bucket access is
+                    // controlled by R2's own public access setting instead.
+                    acl: false,
+                    additional_client_config: { forcePathStyle: true },
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      : []),
     ...(stripeApiKey
       ? [
           {
