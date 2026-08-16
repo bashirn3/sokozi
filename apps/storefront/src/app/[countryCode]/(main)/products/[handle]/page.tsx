@@ -5,6 +5,11 @@ import { getRegion, listRegions } from "@lib/data/regions"
 import ProductTemplate from "@modules/products/templates"
 import { HttpTypes } from "@medusajs/types"
 
+// Prerendered by generateStaticParams, so without a window this page is frozen
+// at build time and never shows a product added afterwards. See
+// lib/constants/cache.ts.
+export const revalidate = 60
+
 type Props = {
   params: Promise<{ countryCode: string; handle: string }>
   searchParams: Promise<{ v_id?: string }>

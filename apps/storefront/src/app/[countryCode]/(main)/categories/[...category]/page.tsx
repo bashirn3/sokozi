@@ -8,6 +8,11 @@ import CategoryTemplate from "@modules/categories/templates"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { parseOptionValueIds } from "@lib/util/product-option-filters"
 
+// Prerendered by generateStaticParams, so without a window this page is frozen
+// at build time and never shows a product added afterwards. See
+// lib/constants/cache.ts.
+export const revalidate = 60
+
 type Props = {
   params: Promise<{ category: string[]; countryCode: string }>
   searchParams: Promise<

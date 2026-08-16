@@ -40,7 +40,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
                 href={`https://wa.me/${whatsappNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline"
+                className="tap-target underline"
                 data-testid="account-whatsapp-link"
               >
                 Chat on WhatsApp

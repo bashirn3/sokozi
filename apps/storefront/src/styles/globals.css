@@ -126,6 +126,14 @@
     @apply max-w-[1440px] w-full mx-auto px-6;
   }
 
+  /* A text link is only as tall as its line, which measured between 15 and 21
+     pixels across the nav, footer and category lists. On a phone that is a
+     hard thing to hit. This gives a link a 44px touch area without changing
+     how large the text looks: the box grows, the type does not. */
+  .tap-target {
+    @apply inline-flex items-center min-h-11;
+  }
+
   .contrast-btn {
     @apply px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition-colors duration-200 ease-in;
   }

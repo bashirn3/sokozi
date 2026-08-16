@@ -31,7 +31,13 @@ const ProductFeed = async ({ region }: ProductFeedProps) => {
           Scroll trending products and order in seconds
         </p>
       </div>
-      <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 lg:px-8">
+      {/* px-6 matches content-container, so this row starts on the same line as
+          every other section. scroll-px-6 is what actually makes that hold:
+          snap-mandatory snaps to a card's edge, which scrolls the container by
+          exactly the padding and leaves the first card flush against the
+          viewport at 0. Scroll padding moves the snap position instead, so the
+          card lands at 24px like the headings above it. */}
+      <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 scroll-px-6 pb-4">
         {products.map((product) => {
           const price =
             product.variants?.[0]?.calculated_price?.calculated_amount ?? 0

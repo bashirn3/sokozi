@@ -50,9 +50,17 @@ const CategoryGrid = ({ categories }: CategoryGridProps) => {
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               )}
-              {/* Keeps the label readable over whatever the photo is doing. */}
-              <span className="absolute inset-0 bg-ink/45" aria-hidden="true" />
-              <span className="heading relative">{category.name}</span>
+              {/* A flat 45% wash was not enough: over the bright kitchen and the
+                  pale cosmetics shots, Home and Beauty were close to
+                  unreadable. A gradient that is heaviest where the label sits
+                  darkens the bottom without flattening the whole photograph. */}
+              <span
+                className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/50 to-ink/20"
+                aria-hidden="true"
+              />
+              <span className="heading relative drop-shadow-sm">
+                {category.name}
+              </span>
             </LocalizedClientLink>
           )
         })}

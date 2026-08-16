@@ -28,7 +28,7 @@ export default async function Nav() {
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase text-ink"
+              className="tap-target txt-compact-xlarge-plus hover:text-ui-fg-base uppercase text-ink"
               data-testid="nav-store-link"
             >
               Sokozi
@@ -38,7 +38,7 @@ export default async function Nav() {
           <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
             <div className="hidden small:flex items-center gap-x-6 h-full">
               <LocalizedClientLink
-                className="hover:text-ui-fg-base"
+                className="tap-target hover:text-ui-fg-base"
                 href="/account"
                 data-testid="nav-account-link"
               >
@@ -48,7 +48,7 @@ export default async function Nav() {
             <Suspense
               fallback={
                 <LocalizedClientLink
-                  className="hover:text-ui-fg-base flex gap-2"
+                  className="tap-target hover:text-ui-fg-base gap-2"
                   href="/cart"
                   data-testid="nav-cart-link"
                 >

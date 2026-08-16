@@ -18,7 +18,7 @@ export default async function Footer() {
           <div>
             <LocalizedClientLink
               href="/"
-              className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase text-ink"
+              className="tap-target txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase text-ink"
             >
               Sokozi
             </LocalizedClientLink>
@@ -52,7 +52,7 @@ export default async function Footer() {
                       >
                         <LocalizedClientLink
                           className={clx(
-                            "hover:text-ui-fg-base",
+                            "tap-target hover:text-ui-fg-base",
                             children && "txt-small-plus"
                           )}
                           href={`/categories/${c.handle}`}
@@ -66,7 +66,7 @@ export default async function Footer() {
                               children.map((child) => (
                                 <li key={child.id}>
                                   <LocalizedClientLink
-                                    className="hover:text-ui-fg-base"
+                                    className="tap-target hover:text-ui-fg-base"
                                     href={`/categories/${child.handle}`}
                                     data-testid="category-link"
                                   >
@@ -98,7 +98,7 @@ export default async function Footer() {
                   {collections?.slice(0, 6).map((c) => (
                     <li key={c.id}>
                       <LocalizedClientLink
-                        className="hover:text-ui-fg-base"
+                        className="tap-target hover:text-ui-fg-base"
                         href={`/collections/${c.handle}`}
                       >
                         {c.title}
