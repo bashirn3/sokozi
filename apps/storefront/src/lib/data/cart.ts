@@ -118,24 +118,33 @@ export async function updateCart(data: HttpTypes.StoreUpdateCart) {
  * Under Mercur a cart line is an offer, not a variant. A variant is a
  * catalogue entry that any number of sellers can list, and the offer is one
  * seller's listing of it — which is what carries the price, the stock and the
- * shipping profile. Sending variant_id here is rejected outright:
+ * shipping profile. Mercur's route rejects the old body outright:
  *
  *   400  Field 'offer_id' is required; Unrecognized fields: 'variant_id'
  *
- * The offer id arrives on the variant as `offer_id`, alongside the
- * calculated_price computed from that same offer.
+ * Both ids are accepted here, and whichever exists is sent, because the two
+ * apps cannot deploy at the same instant. Between the two container swaps one
+ * side is always a version behind, and without this the buy button is broken
+ * for that whole window whichever app goes first. Vanilla Medusa returns a
+ * variant with no offer_id and Mercur returns an offer_id, so the id that is
+ * present is also the one that backend understands.
+ *
+ * Once both sides are deployed and settled this can go: take offerId alone,
+ * and drop variantId from the callers.
  */
 export async function addToCart({
   offerId,
+  variantId,
   quantity,
   countryCode,
 }: {
-  offerId: string
+  offerId?: string | null
+  variantId?: string | null
   quantity: number
   countryCode: string
 }) {
-  if (!offerId) {
-    throw new Error("Missing offer ID when adding to cart")
+  if (!offerId && !variantId) {
+    throw new Error("Missing offer and variant ID when adding to cart")
   }
 
   const cart = await getOrSetCart(countryCode)
@@ -156,7 +165,7 @@ export async function addToCart({
       // route Mercur puts in its place accepts the opposite, so the body is
       // correct at runtime and only the published type is behind.
       {
-        offer_id: offerId,
+        ...(offerId ? { offer_id: offerId } : { variant_id: variantId }),
         quantity,
       } as unknown as HttpTypes.StoreAddCartLineItem,
       {},

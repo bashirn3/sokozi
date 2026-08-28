@@ -106,17 +106,17 @@ export default function ProductActions({
   // Under Mercur stock belongs to the offer, not the variant, so
   // `variants.inventory_quantity` comes back empty even when asked for
   // explicitly — the variant is a catalogue entry that any seller may list.
-  // The old check read that field and fell through to false, which quietly
-  // marked the entire catalogue "Out of stock" while every price rendered
-  // correctly.
+  // Reading only that field marks the entire catalogue "Out of stock" while
+  // every price still renders correctly.
   //
-  // A priced offer is therefore the signal that something is purchasable. Real
-  // stock is still enforced where it cannot be stale: the cart rejects an
-  // over-quantity line with "Some inventory item linked to an offer does not
-  // have sufficient stock". That makes overselling impossible, but it does
-  // mean a sold-out item reads as available until the customer adds it.
-  // Showing that accurately needs per-offer stock from /store/offers, which is
-  // a follow-up rather than part of the cutover.
+  // Both signals are accepted so this holds against either backend during the
+  // deploy: an offer id from Mercur, or an inventory count from vanilla
+  // Medusa. Real stock is enforced where it cannot be stale — the cart rejects
+  // an over-quantity line with "Some inventory item linked to an offer does
+  // not have sufficient stock", so overselling stays impossible. It does mean
+  // a sold-out item reads as available until the customer adds it; showing
+  // that accurately needs per-offer stock from /store/offers, which is a
+  // follow-up rather than part of the cutover.
   const inStock = useMemo(() => {
     if (selectedVariant && !selectedVariant.manage_inventory) {
       return true
@@ -126,21 +126,27 @@ export default function ProductActions({
       return true
     }
 
-    return Boolean(offerId)
+    if (offerId) {
+      return true
+    }
+
+    return (selectedVariant?.inventory_quantity || 0) > 0
   }, [selectedVariant, offerId])
 
   const actionsRef = useRef<HTMLDivElement>(null)
 
   const inView = useIntersection(actionsRef, "0px")
 
-  // Add the selected seller's offer to the cart.
+  // Add the selected seller's offer to the cart, falling back to the variant
+  // so this works against whichever backend is currently deployed.
   const handleAddToCart = async () => {
-    if (!offerId) return null
+    if (!offerId && !selectedVariant?.id) return null
 
     setIsAdding(true)
 
     await addToCart({
       offerId,
+      variantId: selectedVariant?.id,
       quantity: 1,
       countryCode,
     })
