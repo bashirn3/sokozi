@@ -1,4 +1,5 @@
-import { loadEnv, defineConfig } from '@medusajs/framework/utils'
+import { loadEnv } from '@medusajs/framework/utils'
+import { withMercur } from '@mercurjs/core'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
@@ -17,18 +18,45 @@ const stripeApiKey = process.env.STRIPE_API_KEY
 // gated on the bucket being set so local development works untouched.
 const s3Bucket = process.env.S3_BUCKET
 
-module.exports = defineConfig({
+// withMercur wraps the same object defineConfig takes and calls defineConfig
+// itself, so it replaces that call rather than nesting inside it. It also
+// disables Medusa's own admin dashboard, replaces Medusa's middlewares, turns
+// on the rbac feature flag, and appends the @mercurjs/core plugin. The modules
+// listed below are spread in ahead of its own and survive untouched.
+module.exports = withMercur({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
       authCors: process.env.AUTH_CORS!,
+      // Mercur's vendor panel is served from its own origin.
+      vendorCors: process.env.VENDOR_CORS ?? 'http://localhost:5174',
       jwtSecret: process.env.JWT_SECRET,
       cookieSecret: process.env.COOKIE_SECRET,
     }
   },
   modules: [
+    // These two are not optional bookkeeping. withMercur registers admin-ui
+    // and vendor-ui through its plugin with no options at all, but Mercur's
+    // own DashboardModuleOptions declares name, path and appDir as required.
+    // The services therefore never finish onApplicationStart, their express
+    // app is never built, and Mercur's `matcher: "*"` GET middleware calls the
+    // resulting undefined anyway — so every GET request 500s, /health
+    // included. The failure looks like a total deployment outage rather than a
+    // missing dashboard. Declaring the modules here with disable: true makes
+    // that middleware bail out before it reaches the missing app.
+    //
+    // Turn these on by pointing appDir at a real dashboard build and dropping
+    // disable, once we decide we want Mercur's panels.
+    {
+      resolve: '@mercurjs/core/modules/admin-ui',
+      options: { disable: true, name: 'Admin', path: '/app', appDir: '.' },
+    },
+    {
+      resolve: '@mercurjs/core/modules/vendor-ui',
+      options: { disable: true, name: 'Vendor', path: '/vendor', appDir: '.' },
+    },
     ...(s3Bucket
       ? [
           {

@@ -114,17 +114,37 @@ export async function updateCart(data: HttpTypes.StoreUpdateCart) {
     .catch(medusaError)
 }
 
+/**
+ * Under Mercur a cart line is an offer, not a variant. A variant is a
+ * catalogue entry that any number of sellers can list, and the offer is one
+ * seller's listing of it — which is what carries the price, the stock and the
+ * shipping profile. Mercur's route rejects the old body outright:
+ *
+ *   400  Field 'offer_id' is required; Unrecognized fields: 'variant_id'
+ *
+ * Both ids are accepted here, and whichever exists is sent, because the two
+ * apps cannot deploy at the same instant. Between the two container swaps one
+ * side is always a version behind, and without this the buy button is broken
+ * for that whole window whichever app goes first. Vanilla Medusa returns a
+ * variant with no offer_id and Mercur returns an offer_id, so the id that is
+ * present is also the one that backend understands.
+ *
+ * Once both sides are deployed and settled this can go: take offerId alone,
+ * and drop variantId from the callers.
+ */
 export async function addToCart({
+  offerId,
   variantId,
   quantity,
   countryCode,
 }: {
-  variantId: string
+  offerId?: string | null
+  variantId?: string | null
   quantity: number
   countryCode: string
 }) {
-  if (!variantId) {
-    throw new Error("Missing variant ID when adding to cart")
+  if (!offerId && !variantId) {
+    throw new Error("Missing offer and variant ID when adding to cart")
   }
 
   const cart = await getOrSetCart(countryCode)
@@ -140,10 +160,14 @@ export async function addToCart({
   await sdk.store.cart
     .createLineItem(
       cart.id,
+      // The Medusa SDK's line-item type still describes vanilla Medusa's
+      // body, where variant_id is required and offer_id does not exist. The
+      // route Mercur puts in its place accepts the opposite, so the body is
+      // correct at runtime and only the published type is behind.
       {
-        variant_id: variantId,
+        ...(offerId ? { offer_id: offerId } : { variant_id: variantId }),
         quantity,
-      },
+      } as unknown as HttpTypes.StoreAddCartLineItem,
       {},
       headers
     )

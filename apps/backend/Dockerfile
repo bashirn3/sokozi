@@ -47,8 +47,11 @@ EXPOSE 9000
 # package root and reintroduce the bug.
 WORKDIR /app/apps/backend/.medusa/server
 
-# db:migrate also runs the data migration scripts in src/migration-scripts,
-# which is where the Sokozi seed lives. Medusa records each one in
-# script_migrations, so a fresh database is seeded exactly once and every
-# deploy after this is a no-op. Do not add a separate seed step.
+# db:migrate also runs Mercur's migrations and the data migration scripts in
+# src/migration-scripts, which is where the Sokozi seed lives. Medusa records
+# each one in script_migrations, so a fresh database is seeded exactly once and
+# every deploy after this is a no-op. Do not add a separate seed step.
+#
+# The seller backfill is deliberately NOT run here. It is a one-time cutover
+# that has to be observed, not something to repeat on every container start.
 CMD ["sh", "-c", "/app/apps/backend/node_modules/.bin/medusa db:migrate && exec /app/apps/backend/node_modules/.bin/medusa start"]
