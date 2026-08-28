@@ -95,42 +95,52 @@ export default function ProductActions({
     router.replace(pathname + "?" + params.toString())
   }, [selectedVariant, isValidVariant])
 
-  // check if the selected variant is in stock
+  // Mercur carries the offer id on the variant, next to the price it computed
+  // from that same offer. A variant with no offer_id has no seller listing
+  // behind it, so there is nothing to price and nothing to buy.
+  const offerId = (selectedVariant as { offer_id?: string | null } | undefined)
+    ?.offer_id
+
+  // Whether the selected variant can be bought.
+  //
+  // Under Mercur stock belongs to the offer, not the variant, so
+  // `variants.inventory_quantity` comes back empty even when asked for
+  // explicitly — the variant is a catalogue entry that any seller may list.
+  // The old check read that field and fell through to false, which quietly
+  // marked the entire catalogue "Out of stock" while every price rendered
+  // correctly.
+  //
+  // A priced offer is therefore the signal that something is purchasable. Real
+  // stock is still enforced where it cannot be stale: the cart rejects an
+  // over-quantity line with "Some inventory item linked to an offer does not
+  // have sufficient stock". That makes overselling impossible, but it does
+  // mean a sold-out item reads as available until the customer adds it.
+  // Showing that accurately needs per-offer stock from /store/offers, which is
+  // a follow-up rather than part of the cutover.
   const inStock = useMemo(() => {
-    // If we don't manage inventory, we can always add to cart
     if (selectedVariant && !selectedVariant.manage_inventory) {
       return true
     }
 
-    // If we allow back orders on the variant, we can add to cart
     if (selectedVariant?.allow_backorder) {
       return true
     }
 
-    // If there is inventory available, we can add to cart
-    if (
-      selectedVariant?.manage_inventory &&
-      (selectedVariant?.inventory_quantity || 0) > 0
-    ) {
-      return true
-    }
-
-    // Otherwise, we can't add to cart
-    return false
-  }, [selectedVariant])
+    return Boolean(offerId)
+  }, [selectedVariant, offerId])
 
   const actionsRef = useRef<HTMLDivElement>(null)
 
   const inView = useIntersection(actionsRef, "0px")
 
-  // add the selected variant to the cart
+  // Add the selected seller's offer to the cart.
   const handleAddToCart = async () => {
-    if (!selectedVariant?.id) return null
+    if (!offerId) return null
 
     setIsAdding(true)
 
     await addToCart({
-      variantId: selectedVariant.id,
+      offerId,
       quantity: 1,
       countryCode,
     })

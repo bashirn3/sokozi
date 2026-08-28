@@ -114,17 +114,28 @@ export async function updateCart(data: HttpTypes.StoreUpdateCart) {
     .catch(medusaError)
 }
 
+/**
+ * Under Mercur a cart line is an offer, not a variant. A variant is a
+ * catalogue entry that any number of sellers can list, and the offer is one
+ * seller's listing of it — which is what carries the price, the stock and the
+ * shipping profile. Sending variant_id here is rejected outright:
+ *
+ *   400  Field 'offer_id' is required; Unrecognized fields: 'variant_id'
+ *
+ * The offer id arrives on the variant as `offer_id`, alongside the
+ * calculated_price computed from that same offer.
+ */
 export async function addToCart({
-  variantId,
+  offerId,
   quantity,
   countryCode,
 }: {
-  variantId: string
+  offerId: string
   quantity: number
   countryCode: string
 }) {
-  if (!variantId) {
-    throw new Error("Missing variant ID when adding to cart")
+  if (!offerId) {
+    throw new Error("Missing offer ID when adding to cart")
   }
 
   const cart = await getOrSetCart(countryCode)
@@ -140,10 +151,14 @@ export async function addToCart({
   await sdk.store.cart
     .createLineItem(
       cart.id,
+      // The Medusa SDK's line-item type still describes vanilla Medusa's
+      // body, where variant_id is required and offer_id does not exist. The
+      // route Mercur puts in its place accepts the opposite, so the body is
+      // correct at runtime and only the published type is behind.
       {
-        variant_id: variantId,
+        offer_id: offerId,
         quantity,
-      },
+      } as unknown as HttpTypes.StoreAddCartLineItem,
       {},
       headers
     )

@@ -24,3 +24,7 @@ build
 !.yarn/versions
 
 .medusa
+
+# Mercur's codegen writes route types here on every boot, the same way
+# medusa build writes .medusa.
+.mercur
