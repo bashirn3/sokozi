@@ -139,6 +139,93 @@ export default async function backfillSokoziSeller({ container }: ExecArgs) {
     throw new Error('No stock location found. Seed one before backfilling.')
   }
 
+  // ---------------------------------------------------- fulfillment ownership
+
+  // Mercur filters shipping options by seller, because in a marketplace each
+  // vendor ships from its own places on its own terms. A vendor onboarding
+  // through the vendor panel creates that infrastructure as it goes, so these
+  // links come into being on their own. Sokozi is not onboarding — its
+  // warehouse, delivery options and shipping profile already exist from the
+  // seed and predate the seller entirely.
+  //
+  // Without these links the store looks completely healthy right up to
+  // checkout, where /store/shipping-options returns an empty list and the
+  // order cannot be placed. Linking is what makes the existing infrastructure
+  // Sokozi's, so the delivery options it already had keep being offered.
+  const { data: fulfillmentSets } = await query.graph({
+    entity: 'fulfillment_set',
+    fields: ['id', 'name'],
+  })
+  const { data: serviceZones } = await query.graph({
+    entity: 'service_zone',
+    fields: ['id', 'name'],
+  })
+  const { data: shippingOptions } = await query.graph({
+    entity: 'shipping_option',
+    fields: ['id', 'name'],
+  })
+
+  const owned = await query.graph({
+    entity: 'seller',
+    fields: [
+      'stock_locations.id',
+      'shipping_profiles.id',
+      'shipping_options.id',
+      'fulfillment_sets.id',
+      'service_zones.id',
+    ],
+    filters: { id: sellerId },
+  })
+  const already = (relation: string) =>
+    new Set(
+      (
+        ((owned.data[0] as Record<string, unknown>)?.[relation] as
+          | { id?: string }[]
+          | undefined) ?? []
+      ).flatMap((r) => (r?.id ? [r.id] : []))
+    )
+
+  const fulfillmentLinks = [
+    ...stockLocations
+      .filter((l) => l?.id && !already('stock_locations').has(l.id))
+      .map((l) => ({
+        [Modules.STOCK_LOCATION]: { stock_location_id: l.id },
+        seller: { seller_id: sellerId },
+      })),
+    ...shippingProfiles
+      .filter((p) => p?.id && !already('shipping_profiles').has(p.id))
+      .map((p) => ({
+        [Modules.FULFILLMENT]: { shipping_profile_id: p.id },
+        seller: { seller_id: sellerId },
+      })),
+    ...shippingOptions
+      .filter((o) => o?.id && !already('shipping_options').has(o.id))
+      .map((o) => ({
+        [Modules.FULFILLMENT]: { shipping_option_id: o.id },
+        seller: { seller_id: sellerId },
+      })),
+    ...fulfillmentSets
+      .filter((f) => f?.id && !already('fulfillment_sets').has(f.id))
+      .map((f) => ({
+        seller: { seller_id: sellerId },
+        [Modules.FULFILLMENT]: { fulfillment_set_id: f.id },
+      })),
+    ...serviceZones
+      .filter((z) => z?.id && !already('service_zones').has(z.id))
+      .map((z) => ({
+        seller: { seller_id: sellerId },
+        [Modules.FULFILLMENT]: { service_zone_id: z.id },
+      })),
+  ]
+
+  if (fulfillmentLinks.length) {
+    await link.create(fulfillmentLinks)
+  }
+  logger.info(
+    `Linked ${fulfillmentLinks.length} fulfillment record(s) to the seller ` +
+      `(locations, profiles, options, sets, zones).`
+  )
+
   const { data: existingOffers } = await query.graph({
     entity: 'offer',
     fields: ['id', 'variant_id'],
