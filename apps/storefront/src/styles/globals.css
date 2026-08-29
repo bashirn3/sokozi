@@ -87,38 +87,48 @@
   /**
    * Type scale. Mobile first, display sizes fluid.
    *
-   * The price classes are the signature of this store: on a product card the
-   * price is set larger than the product name, because in a market the price
-   * is the headline.
+   * Sizes were pulled down to sit near the 12/14/16 the reference runs on,
+   * where almost everything is regular weight and bold is rationed. A page
+   * set mostly in 400 with one bold thing per card is what separates a
+   * catalogue that looks bought from one that looks generated.
+   *
+   * One deliberate departure. The original note here read: "on a product card
+   * the price is set larger than the product name, because in a market the
+   * price is the headline." That is true of this market and worth keeping, but
+   * it was set at 1.75rem, which shouts. The price still leads — 1rem bold
+   * against a 0.875rem regular title — it just no longer arrives before the
+   * photograph.
    */
   .display {
-    font: 800 clamp(2rem, 8vw, 3.25rem) / 0.95 var(--font-display);
-    letter-spacing: -0.03em;
-  }
-
-  .heading {
-    font: 700 1.25rem / 1.15 var(--font-display);
-    letter-spacing: -0.01em;
-  }
-
-  .price {
-    font: 800 1.75rem / 1 var(--font-display);
+    font: 700 clamp(1.75rem, 6.5vw, 2.75rem) / 1 var(--font-display);
     letter-spacing: -0.02em;
   }
 
+  .heading {
+    font: 500 1.125rem / 1.2 var(--font-display);
+    letter-spacing: -0.005em;
+  }
+
+  .price {
+    font: 700 1rem / 1.2 var(--font-display);
+    letter-spacing: 0;
+  }
+
   .price-label {
-    font: 600 0.6875rem / 1 var(--font-body);
+    font: 400 0.6875rem / 1 var(--font-body);
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
   .body {
-    font: 400 0.9375rem / 1.5 var(--font-body);
+    font: 400 0.875rem / 1.5 var(--font-body);
   }
 
+  /* Small uppercase utility labels: nav rules, badges, section eyebrows. The
+     reference sets these at 10–12px, 700, with about 0.8px of tracking. */
   .label {
-    font: 600 0.75rem / 1 var(--font-body);
-    letter-spacing: 0.06em;
+    font: 700 0.75rem / 1 var(--font-body);
+    letter-spacing: 0.055em;
     text-transform: uppercase;
   }
 

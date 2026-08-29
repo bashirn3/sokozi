@@ -1,8 +1,8 @@
 /**
  * Sokozi design tokens.
  *
- * Single source of truth for colour and shape. Components reference these
- * through the Tailwind names declared in tailwind.config.js.
+ * Single source of truth for colour, shape and motion. Components reference
+ * these through the Tailwind names declared in tailwind.config.js.
  *
  * Rule: no hex values in components. If a colour is needed that is not here,
  * add a token rather than inlining it.
@@ -18,40 +18,79 @@
  *    modules/checkout/components/payment-container takes literal values. Those
  *    literals mirror --ink and --ink-muted and have to be updated by hand if
  *    these change.
+ *
+ * ---------------------------------------------------------------------------
+ * The palette is the Tanzanian flag used as a structure rather than a coat of
+ * paint. The flag is a black diagonal, fringed in gold, dividing green from
+ * blue. So: near-black is the ground of the loud surfaces, gold is the single
+ * accent, green confirms, and blue is the quiet secondary. Full flag values
+ * (#1EB53A, #FCD116, #00A3DD) are deepened here because at full saturation
+ * they vibrate against warm paper and read as a novelty theme.
  */
 
 :root {
   /* Ground and ink. Warm paper rather than pure white, so the near-black
      reads as printed rather than as a screen. */
   --paper: #fbfaf7;
-  --paper-shade: #f1ede4;
+  --paper-shade: #f2eee6;
   --ink: #14110e;
   --ink-muted: #6b645b;
-  --hairline: #ddd7cb;
+  --hairline: #e2dcd1;
 
-  /* The single accent. Used for calls to action and the deals rule.
-     Nothing else gets to be this loud. */
-  --marigold: #e39a00;
+  /* Inverted surfaces: the header, the hero, the footer. Near-black rather
+     than pure black so photography sitting on it does not look cut out. */
+  --pitch: #121110;
+  --pitch-soft: #2a2724;
+  --on-pitch: #f7f4ee;
+  --on-pitch-muted: #a9a29a;
 
-  /* Flat category blocks, in the manner of painted duka boards. */
-  --cat-electronics: #1f3a5f;
-  --cat-fashion: #b3402a;
-  --cat-home: #2e5e3a;
-  --cat-beauty: #7a3f63;
+  /* The single accent, from the flag's gold fringe. Used for calls to action,
+     the deals rule, and the hero's diagonal. Nothing else gets to be this
+     loud. */
+  --marigold: #e8b21f;
+  --marigold-deep: #b8860a;
+
+  /* Flag green and blue. Green carries confirmation and the trust marks that
+     say an order or a seller is good; blue is the quiet secondary used for
+     links inside prose. Neither is decorative. */
+  --tz-green: #17913a;
+  --tz-blue: #0a7ea8;
+
+  /* Flat category blocks, in the manner of painted duka boards, pulled toward
+     the flag so they read as one family rather than four unrelated hues. */
+  --cat-electronics: #14425c;
+  --cat-fashion: #9c3520;
+  --cat-home: #1d5c33;
+  --cat-beauty: #6d3a58;
 
   /* Status */
-  --ok: #2e5e3a;
+  --ok: var(--tz-green);
   --error: #a32b1c;
 
-  /* Type. --font-archivo is injected by next/font in src/app/layout.tsx.
-     Body text deliberately downloads nothing. */
-  --font-display: var(--font-archivo), system-ui, sans-serif;
-  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Type. --font-jost is injected by next/font in src/app/layout.tsx.
+     Body text deliberately downloads nothing beyond that one family. */
+  --font-display: var(--font-jost), "Futura", "Century Gothic", system-ui,
+    sans-serif;
+  --font-body: var(--font-jost), system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
 
-  /* Shape. One radius, one border weight, everywhere.
-     Genuinely circular controls are the documented exception: radio buttons,
-     spinners and avatars keep rounded-full because their function depends on
-     being a circle. */
-  --radius: 2px;
+  /* Shape. Square, everywhere.
+     Measured from the reference: its buttons, inputs and cards all sit at
+     border-radius 0, and that single fact does more for the fashion-retail
+     feel than any colour choice. Genuinely circular controls are the
+     documented exception: radio buttons, spinners and avatars keep
+     rounded-full because their function depends on being a circle. */
+  --radius: 0px;
   --border: 1px;
+
+  /* Motion.
+     Also measured. The reference runs on opacity at 200ms with stock `ease`,
+     four times more often than it moves anything at all, and nothing scales
+     on hover. Springy easing, staggered entrances and hover zooms are the
+     house style of generated storefronts, so they are absent here on purpose.
+     Fade; do not fly. */
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --ease: ease;
 }
