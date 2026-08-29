@@ -44,7 +44,7 @@ const Hero = () => {
           gets room to be a photograph. A hero that ends before the fold reads
           as a banner; one that fills most of the screen reads as an entrance. */}
       <div className="content-container relative flex min-h-[62vh] flex-col items-start justify-center gap-5 py-20 small:min-h-[72vh] small:py-28">
-        <span className="label text-marigold">Dar es Salaam</span>
+        <span className="label text-marigold-deep">Dar es Salaam</span>
 
         <h1 className="display max-w-[12ch]">Soko Yako Mkononi</h1>
 
@@ -55,7 +55,7 @@ const Hero = () => {
 
         <LocalizedClientLink
           href="/store"
-          className="label mt-2 bg-marigold px-7 py-4 text-ink transition-colors duration-200 ease-[ease] hover:bg-on-pitch focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marigold"
+          className="label mt-2 bg-marigold-deep px-7 py-4 text-ink transition-colors duration-200 ease-[ease] hover:bg-on-pitch focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marigold-deep"
         >
           Shop all products
         </LocalizedClientLink>

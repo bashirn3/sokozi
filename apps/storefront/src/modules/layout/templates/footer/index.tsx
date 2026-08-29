@@ -4,6 +4,7 @@ import { listCollections } from "@lib/data/collections";
 import { Text, clx } from "@modules/common/components/ui";
 
 import LocalizedClientLink from "@modules/common/components/localized-client-link";
+import Wordmark from "@modules/layout/components/wordmark";
 
 export default async function Footer() {
   const { collections } = await listCollections({
@@ -18,9 +19,9 @@ export default async function Footer() {
           <div>
             <LocalizedClientLink
               href="/"
-              className="tap-target txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase text-ink"
+              className="tap-target"
             >
-              Sokozi
+              <Wordmark />
             </LocalizedClientLink>
           </div>
           <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
