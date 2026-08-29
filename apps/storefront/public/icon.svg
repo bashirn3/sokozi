@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sokozi">
+  <!-- Square, matching the store's zero-radius design language. Near-black
+       ground with the wordmark's flag green, so the tab icon reads as the
+       first letter of the logo rather than as a different mark. Green rather
+       than gold because gold on near-black muddies at 16px. -->
+  <rect width="64" height="64" fill="#121110"/>
+  <text x="32" y="33" fill="#17913a" font-family="Jost, Futura, 'Century Gothic', system-ui, sans-serif"
+        font-size="46" font-weight="500" text-anchor="middle" dominant-baseline="central"
+        letter-spacing="0">S</text>
+</svg>

@@ -9,7 +9,10 @@ import { listCollections } from "@lib/data/collections"
 import { getRegion } from "@lib/data/regions"
 
 export const metadata: Metadata = {
-  title: "Sokozi — Soko Yako Mkononi",
+  // A pipe rather than an em dash: this string is the headline a link preview
+  // shows when the store is pasted into WhatsApp, and a pipe survives being
+  // truncated where an em dash reads as a broken character in some clients.
+  title: "Sokozi | Soko Yako Mkononi",
   description:
     "Mobile-first store for Tanzania. Shop electronics, fashion, home goods and beauty, priced in TZS and delivered across Dar es Salaam.",
 }

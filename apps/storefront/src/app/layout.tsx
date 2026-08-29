@@ -23,6 +23,19 @@ const jost = Jost({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getBaseURL()),
+  // The wordmark's own S, in the flag green, on the near-black ground the rest
+  // of the store uses. A tab icon renders at 16px, where the full word is
+  // illegible and the gold goes muddy against the dark — the green holds its
+  // edge, and being the first letter of the mark it reads as the same identity
+  // rather than a second one.
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32" },
+      { url: "/icon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: [{ url: "/icon-180.png", sizes: "180x180" }],
+  },
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {
