@@ -38,7 +38,13 @@ const Wordmark = ({
 }) => (
   <span
     className={clx(
-      "label inline-flex items-baseline text-base leading-none tracking-[0.12em]",
+      // Sized to carry the header rather than sit politely inside it, and set
+      // light rather than bold. The label default is 700, which at this size
+      // turns the mark into a slab; Jost's geometry is what should be doing
+      // the work, and it only shows at a weight that lets the counters open
+      // up. Tracking tightens as the size grows, since the wide spacing that
+      // kept the small mark legible starts to pull the word apart.
+      "label inline-flex items-baseline text-2xl font-normal leading-none tracking-[0.08em] small:text-3xl",
       className
     )}
   >

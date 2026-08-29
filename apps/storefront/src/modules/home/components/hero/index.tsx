@@ -1,14 +1,18 @@
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 /**
- * The hero carried a repeating diagonal pattern in the flag's colours. It was
- * cut: at any size that made it visible it read as decoration applied to a
- * page rather than as the page's own structure, which is exactly the look
- * this store is trying to avoid. Flat near-black with the gold accent does
- * the same job without announcing itself.
+ * The hero.
  *
- * flag-field.tsx is kept for now in case a single quiet rule is wanted later.
- * A whole field of it is not.
+ * Flat near-black for now, deliberately. Two things have been tried and cut:
+ * a repeating diagonal in the flag's colours, which read as decoration applied
+ * to a page rather than as the page's own structure, and a documentary
+ * photograph of Kariakoo market, which was a genuine picture of the right
+ * subject but the wrong kind of picture — a street scene where the store needs
+ * a product shot.
+ *
+ * When there is a photograph worth putting here, it goes behind this content
+ * with a left-weighted scrim so the type keeps its contrast. Until then flat
+ * is honest and does not pretend.
  */
 const Hero = () => {
   return (
@@ -18,7 +22,7 @@ const Hero = () => {
 
         <h1 className="display max-w-[12ch]">Soko Yako Mkononi</h1>
 
-        <p className="body max-w-[44ch] text-on-pitch-muted">
+        <p className="body max-w-[42ch] text-on-pitch/85">
           Your market in your hand. Electronics, fashion, home and beauty,
           priced in shillings and shipped from Dar es Salaam.
         </p>
