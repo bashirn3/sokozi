@@ -1,22 +1,42 @@
+import Image from "next/image"
+
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 /**
- * The hero.
+ * The hero: Dar es Salaam from the air, held well back.
  *
- * Flat near-black for now, deliberately. Two things have been tried and cut:
- * a repeating diagonal in the flag's colours, which read as decoration applied
- * to a page rather than as the page's own structure, and a documentary
- * photograph of Kariakoo market, which was a genuine picture of the right
- * subject but the wrong kind of picture — a street scene where the store needs
- * a product shot.
+ * The photograph is bright and busy corner to corner — harbour, high rises,
+ * roofs — so it is treated as ground rather than as subject. Two layers do
+ * that: a flat wash that takes the whole picture down, and a gradient weighted
+ * to the left so the type sits on the darkest part while the harbour stays
+ * readable on the right.
  *
- * When there is a photograph worth putting here, it goes behind this content
- * with a left-weighted scrim so the type keeps its contrast. Until then flat
- * is honest and does not pretend.
+ * The image is also desaturated slightly. At full strength the water competes
+ * with the gold accent, and two loud things in a hero means neither leads.
  */
 const Hero = () => {
   return (
     <section className="relative w-full overflow-hidden bg-pitch text-on-pitch">
+      <Image
+        src="/hero.jpg"
+        alt="Aerial view of Dar es Salaam, its harbour and city centre"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center saturate-[0.85]"
+      />
+
+      {/* Two washes, and the numbers matter: they stack, so each is gentler
+          than it looks. A flat layer takes the whole picture down enough that
+          the city stops competing, and a left-weighted gradient then puts the
+          type on near-solid ground. Pushed further the photograph turns into a
+          dark smudge and there is no reason to carry the image at all. */}
+      <div aria-hidden="true" className="absolute inset-0 bg-pitch/45" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gradient-to-r from-pitch via-pitch/55 to-pitch/15"
+      />
+
       <div className="content-container relative py-20 small:py-28 flex flex-col items-start gap-5">
         <span className="label text-marigold">Dar es Salaam</span>
 

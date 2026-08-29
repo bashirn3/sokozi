@@ -31,23 +31,28 @@
 :root {
   /* Ground and ink. Warm paper rather than pure white, so the near-black
      reads as printed rather than as a screen. */
-  --paper: #fbfaf7;
+  --paper-rgb: 251 250 247;
+  --paper: rgb(var(--paper-rgb));
   --paper-shade: #f2eee6;
-  --ink: #14110e;
+  --ink-rgb: 20 17 14;
+  --ink: rgb(var(--ink-rgb));
   --ink-muted: #6b645b;
   --hairline: #e2dcd1;
 
   /* Inverted surfaces: the header, the hero, the footer. Near-black rather
      than pure black so photography sitting on it does not look cut out. */
-  --pitch: #121110;
+  --pitch-rgb: 18 17 16;
+  --pitch: rgb(var(--pitch-rgb));
   --pitch-soft: #2a2724;
-  --on-pitch: #f7f4ee;
+  --on-pitch-rgb: 247 244 238;
+  --on-pitch: rgb(var(--on-pitch-rgb));
   --on-pitch-muted: #a9a29a;
 
   /* The single accent, from the flag's gold fringe. Used for calls to action,
      the deals rule, and the hero's diagonal. Nothing else gets to be this
      loud. */
-  --marigold: #e8b21f;
+  --marigold-rgb: 232 178 31;
+  --marigold: rgb(var(--marigold-rgb));
   --marigold-deep: #b8860a;
 
   /* Flag green and blue. Green carries confirmation and the trust marks that
