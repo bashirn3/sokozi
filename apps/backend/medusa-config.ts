@@ -24,6 +24,10 @@ const s3Bucket = process.env.S3_BUCKET
 // on the rbac feature flag, and appends the @mercurjs/core plugin. The modules
 // listed below are spread in ahead of its own and survive untouched.
 module.exports = withMercur({
+  // withMercur disables Medusa's dashboard by default, on the assumption that
+  // Mercur's own admin panel replaces it. That panel is not built here, so
+  // without this the store has no management UI at all.
+  admin: { disable: false },
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     http: {
