@@ -43,41 +43,41 @@ const ProductFeed = async ({ region }: ProductFeedProps) => {
             product.variants?.[0]?.calculated_price?.calculated_amount ?? 0
 
           return (
-            <article
+            // No border, no per-card button. The tile is the link and the
+            // photograph is the tile; chrome around each product is what makes
+            // a row read as a widget rather than a rail of merchandise.
+            <LocalizedClientLink
               key={product.id}
-              className="flex min-w-[260px] max-w-[260px] flex-shrink-0 snap-start flex-col overflow-hidden rounded border border-hairline bg-paper"
+              href={`/products/${product.handle}`}
+              className="group min-w-[280px] max-w-[280px] flex-shrink-0 snap-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             >
-              <div className="relative aspect-[9/12] bg-paper-shade">
-                {product.thumbnail ? (
-                  <Image
-                    src={product.thumbnail}
-                    alt={product.title ?? "Product"}
-                    fill
-                    className="object-cover"
-                    sizes="260px"
+              <article className="flex flex-col">
+                <div className="relative aspect-[3/4] overflow-hidden bg-paper-shade">
+                  {product.thumbnail ? (
+                    <Image
+                      src={product.thumbnail}
+                      alt={product.title ?? "Product"}
+                      fill
+                      className="object-cover transition-opacity duration-200 ease-[ease] group-hover:opacity-90"
+                      sizes="280px"
+                    />
+                  ) : (
+                    <div className="body absolute inset-0 flex items-center justify-center text-ink-muted">
+                      No image
+                    </div>
+                  )}
+                </div>
+                <div className="mt-3 flex flex-col gap-1">
+                  <h3 className="body line-clamp-2 text-ink">
+                    {product.title}
+                  </h3>
+                  <PriceBlock
+                    amount={price}
+                    currencyCode={region.currency_code}
                   />
-                ) : (
-                  <div className="body absolute inset-0 flex items-center justify-center text-ink-muted">
-                    No image
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-1 flex-col gap-3 p-4">
-                <PriceBlock
-                  amount={price}
-                  currencyCode={region.currency_code}
-                />
-                <h3 className="body line-clamp-2 flex-1 text-ink">
-                  {product.title}
-                </h3>
-                <LocalizedClientLink
-                  href={`/products/${product.handle}`}
-                  className="label rounded bg-ink px-4 py-3 text-center text-paper transition-colors hover:bg-ink-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
-                >
-                  View product
-                </LocalizedClientLink>
-              </div>
-            </article>
+                </div>
+              </article>
+            </LocalizedClientLink>
           )
         })}
       </div>

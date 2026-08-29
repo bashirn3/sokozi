@@ -90,7 +90,11 @@ export default async function PaginatedProducts({
   return (
     <>
       <ul
-        className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
+        // Tight gutters and four columns at desktop, measured off the
+        // reference: 12px between tiles, which is close enough to gap-x-3.
+        // Density is most of what makes a catalogue read as a catalogue
+        // rather than as a series of cards.
+        className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-3 gap-y-8"
         data-testid="products-list"
       >
         {products.map((p) => {

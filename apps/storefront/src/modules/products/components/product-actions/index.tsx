@@ -191,7 +191,10 @@ export default function ProductActions({
             !isValidVariant
           }
           variant="primary"
-          className="w-full h-10"
+          // Matches the WhatsApp button beside it and the hero's call to
+          // action: buttons in this store are uppercase and tracked, the way
+          // the reference sets every one of its own.
+          className="label w-full h-11"
           isLoading={isAdding}
           data-testid="add-product-button"
         >

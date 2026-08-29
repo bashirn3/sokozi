@@ -11,11 +11,16 @@ type PriceBlockProps = {
 }
 
 /**
- * The signature price treatment.
+ * The price treatment.
  *
- * Currency sits above the number as a small label, and the number is set in
- * the display face at a size that outweighs the product name beside it. In a
- * market the price is the headline, so it is the loudest thing on the card.
+ * The currency is set small and quiet beside the number rather than above it.
+ * It used to sit on its own line, which read well when the number was large,
+ * but the number came down to sit near the rest of the interface and a
+ * stranded "TZS" then cost a whole line in every tile of a dense grid.
+ *
+ * The original intent survives: the number leads, the currency is a label, and
+ * in a market where price is the headline it still outweighs the product name
+ * beside it — by weight now rather than by size.
  */
 const PriceBlock = ({
   amount,
@@ -30,7 +35,7 @@ const PriceBlock = ({
   })
 
   return (
-    <div className={clx("flex flex-col gap-1", className)}>
+    <div className={clx("flex items-baseline gap-1.5", className)}>
       <span className="price-label text-ink-muted">
         {prefix ? `${prefix} ${currency}` : currency}
       </span>
