@@ -1,3 +1,6 @@
+import fs from 'node:fs'
+import path from 'node:path'
+
 import { loadEnv } from '@medusajs/framework/utils'
 import { withMercur } from '@mercurjs/core'
 
@@ -7,6 +10,21 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 // is absent the provider is not registered at all, so a checkout without
 // Stripe configured falls back to the system default provider instead of the
 // backend failing to boot.
+/**
+ * Where a panel's built assets live.
+ *
+ * Two answers, because the config runs from two places. In the source tree the
+ * panel is a sibling workspace at apps/<name>. In the production artifact only
+ * .medusa/server ships, and the panels are copied into
+ * .medusa/server/dashboards/<name> by scripts/bundle-dashboards.mjs after
+ * `medusa build` — the compiled config runs from the artifact root, so
+ * __dirname points there.
+ */
+const dashboardAppDir = (name: string) => {
+  const bundled = path.join(__dirname, 'dashboards', name)
+  return fs.existsSync(bundled) ? bundled : path.join(__dirname, `../${name}`)
+}
+
 const stripeApiKey = process.env.STRIPE_API_KEY
 
 // S3-compatible object storage for admin image uploads. Configured for
@@ -28,6 +46,11 @@ module.exports = withMercur({
   // Mercur's own admin panel replaces it. That panel is not built here, so
   // without this the store has no management UI at all.
   admin: { disable: false },
+  // Turns on the public seller sign-up form in the vendor panel, so a vendor
+  // can create their own store instead of being created for them by hand.
+  featureFlags: {
+    seller_registration: true,
+  },
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     http: {
@@ -41,25 +64,28 @@ module.exports = withMercur({
     }
   },
   modules: [
-    // These two are not optional bookkeeping. withMercur registers admin-ui
-    // and vendor-ui through its plugin with no options at all, but Mercur's
-    // own DashboardModuleOptions declares name, path and appDir as required.
-    // The services therefore never finish onApplicationStart, their express
-    // app is never built, and Mercur's `matcher: "*"` GET middleware calls the
-    // resulting undefined anyway — so every GET request 500s, /health
-    // included. The failure looks like a total deployment outage rather than a
-    // missing dashboard. Declaring the modules here with disable: true makes
-    // that middleware bail out before it reaches the missing app.
+    // Mercur's own panels. withMercur registers these modules through its
+    // plugin with no options at all, while their DashboardModuleOptions
+    // declares path and appDir as required — so left alone the services never
+    // finish onApplicationStart, and the `matcher: "*"` GET middleware calls an
+    // app that was never built. Every GET request 500s, /health included, which
+    // reads as a total outage rather than a missing dashboard.
     //
-    // Turn these on by pointing appDir at a real dashboard build and dropping
-    // disable, once we decide we want Mercur's panels.
+    // The vendor panel is the seller-facing half of the marketplace: sellers
+    // register, then manage their own products, orders, fulfilment and payouts
+    // without going through us.
+    // Mercur's operator panel stays off. Medusa's own dashboard is already
+    // built and serving at /app, and swapping it for Mercur's — which does add
+    // seller, commission and payout screens — is a separate change with its own
+    // build to get wrong. Turn it on by adding apps/admin the same way
+    // apps/vendor was added, and pointing this at dashboardAppDir('admin').
     {
       resolve: '@mercurjs/core/modules/admin-ui',
-      options: { disable: true, name: 'Admin', path: '/app', appDir: '.' },
+      options: { disable: true, name: 'Admin', path: '/dashboard', appDir: '.' },
     },
     {
       resolve: '@mercurjs/core/modules/vendor-ui',
-      options: { disable: true, name: 'Vendor', path: '/vendor', appDir: '.' },
+      options: { name: 'Vendor', path: '/seller', appDir: dashboardAppDir('vendor') },
     },
     ...(s3Bucket
       ? [
