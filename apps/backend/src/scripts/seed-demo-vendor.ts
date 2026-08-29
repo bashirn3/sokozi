@@ -22,6 +22,25 @@ import {
  * Run with:  npx medusa exec ./src/scripts/seed-demo-vendor.ts
  */
 
+/**
+ * The offer rows handed to createOffersWorkflow. Declared rather than inferred
+ * because an empty literal widens to never[] and rejects every push — the same
+ * trap the Sokozi backfill hit.
+ */
+type OfferInput = {
+  seller_id: string
+  created_by: string
+  sku: string
+  variant_id: string
+  shipping_profile_id: string
+  prices: { amount: number; currency_code: string }[]
+  inventory_items: {
+    sku: string
+    required_quantity: number
+    stock_levels: { location_id: string; stocked_quantity: number }[]
+  }[]
+}
+
 const VENDOR = {
   name: 'Kariakoo Traders',
   handle: 'kariakoo',
@@ -206,7 +225,7 @@ export default async function seedDemoVendor({ container }: ExecArgs) {
     fields: ['id', 'sku', 'title'],
   })
 
-  const offers = []
+  const offers: OfferInput[] = []
   for (const variant of variants) {
     const sku = variant?.sku
     if (!sku || !(sku in COMPETING_PRICES)) {

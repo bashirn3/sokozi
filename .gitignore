@@ -70,3 +70,7 @@ plan.html
 
 # Claude Code session-local settings, machine specific
 .claude/
+
+# Vendor panel build output
+apps/vendor/dist
+apps/admin/dist
