@@ -71,21 +71,40 @@ module.exports = withMercur({
     // app that was never built. Every GET request 500s, /health included, which
     // reads as a total outage rather than a missing dashboard.
     //
-    // The vendor panel is the seller-facing half of the marketplace: sellers
-    // register, then manage their own products, orders, fulfilment and payouts
-    // without going through us.
-    // Mercur's operator panel stays off. Medusa's own dashboard is already
-    // built and serving at /app, and swapping it for Mercur's — which does add
-    // seller, commission and payout screens — is a separate change with its own
-    // build to get wrong. Turn it on by adding apps/admin the same way
-    // apps/vendor was added, and pointing this at dashboardAppDir('admin').
+    // The two halves of the marketplace. At /seller a vendor registers and
+    // manages their own products, orders, fulfilment and payouts. At /dashboard
+    // an operator approves sellers and confirms the products they submit into
+    // the shared catalogue, and handles commissions and payouts. Without the
+    // second, those are scripts run by hand and a vendor who signs up is
+    // blocked on someone noticing.
+    //
+    // Medusa's own dashboard stays at /app. It knows nothing about sellers, but
+    // it is what the store was run from before and there is no reason to take
+    // it away.
     {
       resolve: '@mercurjs/core/modules/admin-ui',
-      options: { disable: true, name: 'Admin', path: '/dashboard', appDir: '.' },
+      // viteDevServerPort is set away from Mercur's default of 7000, which on
+      // macOS is AirPlay Receiver. In development the panel probes that port to
+      // decide whether to proxy a Vite dev server, finds ControlCenter
+      // listening, proxies /dashboard to it and serves a 403 — with the panel
+      // built and present the whole time. Mercur's own code warns about this
+      // ("hijack the dashboard when an unrelated process listens on the dev
+      // port"); production skips the probe entirely.
+      options: {
+        name: 'Admin',
+        path: '/dashboard',
+        appDir: dashboardAppDir('admin'),
+        viteDevServerPort: 7010,
+      },
     },
     {
       resolve: '@mercurjs/core/modules/vendor-ui',
-      options: { name: 'Vendor', path: '/seller', appDir: dashboardAppDir('vendor') },
+      options: {
+        name: 'Vendor',
+        path: '/seller',
+        appDir: dashboardAppDir('vendor'),
+        viteDevServerPort: 7011,
+      },
     },
     ...(s3Bucket
       ? [

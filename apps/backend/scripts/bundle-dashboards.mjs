@@ -29,10 +29,11 @@ const artifactDir = path.join(apiDir, '.medusa/server')
 const isProduction = process.env.NODE_ENV === 'production'
 
 // Keep in sync with the admin-ui / vendor-ui module options in medusa-config.ts.
-// Keep in sync with the vendor-ui module options in medusa-config.ts. The
-// operator panel is not listed because Mercur's admin-ui stays disabled — the
-// backend serves Medusa's own dashboard at /app instead.
+// Keep in sync with the admin-ui / vendor-ui module options in
+// medusa-config.ts. Medusa's own dashboard is not listed — `medusa build`
+// produces it and puts it in the artifact itself.
 const PANELS = [
+  { name: 'admin', basePath: '/dashboard/' },
   { name: 'vendor', basePath: '/seller/' },
 ]
 

@@ -73,3 +73,4 @@ plan.html
 
 # Vendor panel build output
 apps/vendor/dist
+apps/admin/dist
