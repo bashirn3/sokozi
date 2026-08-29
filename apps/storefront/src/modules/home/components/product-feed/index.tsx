@@ -49,17 +49,17 @@ const ProductFeed = async ({ region }: ProductFeedProps) => {
             <LocalizedClientLink
               key={product.id}
               href={`/products/${product.handle}`}
-              className="group min-w-[240px] max-w-[240px] flex-shrink-0 snap-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              className="group min-w-[280px] max-w-[280px] flex-shrink-0 snap-start focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             >
               <article className="flex flex-col">
-                <div className="relative aspect-[9/12] overflow-hidden bg-paper-shade">
+                <div className="relative aspect-[3/4] overflow-hidden bg-paper-shade">
                   {product.thumbnail ? (
                     <Image
                       src={product.thumbnail}
                       alt={product.title ?? "Product"}
                       fill
                       className="object-cover transition-opacity duration-200 ease-[ease] group-hover:opacity-90"
-                      sizes="240px"
+                      sizes="280px"
                     />
                   ) : (
                     <div className="body absolute inset-0 flex items-center justify-center text-ink-muted">

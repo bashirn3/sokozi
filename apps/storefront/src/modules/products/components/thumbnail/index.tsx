@@ -29,11 +29,20 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
         "relative w-full overflow-hidden bg-paper-shade rounded ease-in-out duration-150",
         className,
         {
-          // Product tiles are square-ish. The previous 9/16 was a portrait
-          // phone ratio, which cropped roughly two thirds off the width of any
-          // landscape product photo.
+          // Product tiles are portrait, at 3:4.
+          //
+          // This ratio has moved twice. It began at 9/16, a portrait phone
+          // shape that cropped roughly two thirds off the width of any
+          // landscape product photo, and was pulled back to square to stop
+          // that. Square is safe but squat, and it is most of why the grid
+          // read as small: fashion retail sets its tiles tall, closer to
+          // 317x420, and the height is where the larger-than-life feeling
+          // comes from.
+          //
+          // 3:4 is the middle ground — noticeably taller than square, nowhere
+          // near the 9/16 crop that caused the original problem.
           "aspect-[4/5]": isFeatured,
-          "aspect-square": !isFeatured && size !== "square",
+          "aspect-[3/4]": !isFeatured && size !== "square",
           "aspect-[1/1]": size === "square",
           "w-[180px]": size === "small",
           "w-[290px]": size === "medium",
