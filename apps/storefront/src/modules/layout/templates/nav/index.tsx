@@ -4,6 +4,7 @@ import { listLocales } from "@lib/data/locales"
 import { getLocale } from "@lib/data/locale-actions"
 import { listRegions } from "@lib/data/regions"
 import { StoreRegion } from "@medusajs/types"
+import Wordmark from "@modules/layout/components/wordmark"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
@@ -28,10 +29,10 @@ export default async function Nav() {
           <div className="flex items-center h-full">
             <LocalizedClientLink
               href="/"
-              className="tap-target txt-compact-xlarge-plus hover:text-ui-fg-base uppercase text-ink"
+              className="tap-target"
               data-testid="nav-store-link"
             >
-              Sokozi
+              <Wordmark />
             </LocalizedClientLink>
           </div>
 
