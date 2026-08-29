@@ -10,6 +10,14 @@ export type OfferSeller = {
   handle: string
 }
 
+export type VariantOffer = {
+  id: string
+  variantId: string
+  seller: OfferSeller
+  amount: number
+  currencyCode: string
+}
+
 /**
  * Who is selling what.
  *
@@ -52,5 +60,71 @@ export const listOfferSellers = async (): Promise<
       // A storefront that cannot name the seller is worth more than one that
       // will not render, so this degrades to showing no attribution.
       return {}
+    })
+}
+
+/**
+ * Every seller's offer on a given variant, cheapest first.
+ *
+ * A product page quotes one price, and that price belongs to whichever seller
+ * is currently cheapest. Without this the losing offers are invisible: a
+ * shopper sees "Sold by Kariakoo Traders, TZS 23,000" and has no way of
+ * knowing Sokozi lists the same item at 25,000. That is a shop with extra
+ * steps, not a marketplace — the whole point of several vendors carrying one
+ * catalogue entry is that a buyer can see the choice being made for them.
+ *
+ * Fetched from the same cached listing the attribution uses, so showing the
+ * competition costs no extra request.
+ */
+export const listOffersForVariant = async (
+  variantId?: string | null
+): Promise<VariantOffer[]> => {
+  if (!variantId) {
+    return []
+  }
+
+  const next = {
+    ...(await getCacheOptions("offers")),
+    revalidate: CATALOGUE_REVALIDATE_SECONDS,
+  }
+
+  return sdk.client
+    .fetch<{
+      offers: {
+        id: string
+        variant_id: string
+        seller?: OfferSeller | null
+        prices?: { amount: number; currency_code: string }[] | null
+      }[]
+    }>(`/store/offers`, {
+      method: "GET",
+      query: { limit: 200 },
+      next,
+      cache: "force-cache",
+    })
+    .then(({ offers }) =>
+      (offers ?? [])
+        .filter((o) => o?.variant_id === variantId && o.seller?.name)
+        .flatMap((o) => {
+          const price = (o.prices ?? [])[0]
+          if (!price || price.amount == null) {
+            return []
+          }
+          return [
+            {
+              id: o.id,
+              variantId: o.variant_id,
+              seller: o.seller as OfferSeller,
+              amount: price.amount,
+              currencyCode: price.currency_code,
+            },
+          ]
+        })
+        .sort((a, b) => a.amount - b.amount)
+    )
+    .catch(() => {
+      // Losing the competition list must not cost the page. The winning
+      // offer's price and seller are rendered from the product itself.
+      return []
     })
 }
